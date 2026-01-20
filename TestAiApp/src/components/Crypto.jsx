@@ -1,32 +1,103 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Crypto.css';
 
 function Crypto({ userEmail, onLogout, onNavigate }) {
   const [viewMode, setViewMode] = useState('grid'); // grid or list
+  const [cryptoCoins, setCryptoCoins] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Top 20 cryptocurrencies with realistic market data
-  const cryptoCoins = [
-    { rank: 1, name: 'Bitcoin', symbol: 'BTC', price: 1045678.50, change24h: 2.34, marketCap: 20500000000000, volume: 850000000000, icon: '₿' },
-    { rank: 2, name: 'Ethereum', symbol: 'ETH', price: 38456.75, change24h: -1.23, marketCap: 4620000000000, volume: 320000000000, icon: 'Ξ' },
-    { rank: 3, name: 'Tether', symbol: 'USDT', price: 18.50, change24h: 0.01, marketCap: 2050000000000, volume: 1200000000000, icon: '₮' },
-    { rank: 4, name: 'BNB', symbol: 'BNB', price: 5678.90, change24h: 3.45, marketCap: 850000000000, volume: 45000000000, icon: '🔸' },
-    { rank: 5, name: 'Solana', symbol: 'SOL', price: 2345.80, change24h: 5.67, marketCap: 980000000000, volume: 78000000000, icon: '◎' },
-    { rank: 6, name: 'XRP', symbol: 'XRP', price: 11.25, change24h: 1.89, marketCap: 625000000000, volume: 95000000000, icon: '✕' },
-    { rank: 7, name: 'USD Coin', symbol: 'USDC', price: 18.48, change24h: -0.02, marketCap: 550000000000, volume: 180000000000, icon: '💵' },
-    { rank: 8, name: 'Cardano', symbol: 'ADA', price: 8.90, change24h: 2.15, marketCap: 315000000000, volume: 42000000000, icon: '₳' },
-    { rank: 9, name: 'Avalanche', symbol: 'AVAX', price: 678.50, change24h: 4.32, marketCap: 285000000000, volume: 35000000000, icon: '🔺' },
-    { rank: 10, name: 'Dogecoin', symbol: 'DOGE', price: 1.85, change24h: -2.45, marketCap: 265000000000, volume: 58000000000, icon: 'Ð' },
-    { rank: 11, name: 'Polkadot', symbol: 'DOT', price: 123.45, change24h: 3.21, marketCap: 185000000000, volume: 28000000000, icon: '●' },
-    { rank: 12, name: 'Polygon', symbol: 'MATIC', price: 16.75, change24h: 1.95, marketCap: 155000000000, volume: 32000000000, icon: '⬡' },
-    { rank: 13, name: 'TRON', symbol: 'TRX', price: 2.15, change24h: 0.89, marketCap: 195000000000, volume: 45000000000, icon: 'Ⓣ' },
-    { rank: 14, name: 'Chainlink', symbol: 'LINK', price: 298.60, change24h: 2.67, marketCap: 168000000000, volume: 25000000000, icon: '⬢' },
-    { rank: 15, name: 'Litecoin', symbol: 'LTC', price: 1678.90, change24h: -0.78, marketCap: 125000000000, volume: 18000000000, icon: 'Ł' },
-    { rank: 16, name: 'Uniswap', symbol: 'UNI', price: 145.30, change24h: 4.12, marketCap: 110000000000, volume: 22000000000, icon: '🦄' },
-    { rank: 17, name: 'Bitcoin Cash', symbol: 'BCH', price: 4567.80, change24h: 1.45, marketCap: 89000000000, volume: 15000000000, icon: 'Ƀ' },
-    { rank: 18, name: 'Stellar', symbol: 'XLM', price: 2.45, change24h: 3.89, marketCap: 71000000000, volume: 12000000000, icon: '*' },
-    { rank: 19, name: 'Cosmos', symbol: 'ATOM', price: 189.50, change24h: 2.34, marketCap: 75000000000, volume: 16000000000, icon: '⚛' },
-    { rank: 20, name: 'Monero', symbol: 'XMR', price: 3245.60, change24h: -1.56, marketCap: 59000000000, volume: 9000000000, icon: 'ɱ' }
-  ];
+  // Icon mapping for cryptocurrencies
+  const iconMap = {
+    'BTC': '₿', 'ETH': 'Ξ', 'USDT': '₮', 'BNB': '🔸', 'SOL': '◎',
+    'XRP': '✕', 'USDC': '💵', 'ADA': '₳', 'AVAX': '🔺', 'DOGE': 'Ð',
+    'DOT': '●', 'MATIC': '⬡', 'TRX': 'Ⓣ', 'LINK': '⬢', 'LTC': 'Ł',
+    'UNI': '🦄', 'BCH': 'Ƀ', 'XLM': '*', 'ATOM': '⚛', 'XMR': 'ɱ'
+  };
+
+  // USD to ZAR exchange rate (approximate)
+  const USD_TO_ZAR = 18.50;
+
+  // Fetch crypto data from CoinMarketCap
+  const fetchCryptoData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Note: CoinMarketCap API requires an API key
+      // For demo purposes, we'll use a proxy or fallback to CoinGecko API
+      // CoinGecko API is free and doesn't require authentication
+
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false'
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cryptocurrency data');
+      }
+
+      const data = await response.json();
+
+      // Transform the data to match our format
+      const transformedCoins = data.map((coin, index) => ({
+        rank: index + 1,
+        name: coin.name,
+        symbol: coin.symbol.toUpperCase(),
+        price: coin.current_price * USD_TO_ZAR,
+        change24h: coin.price_change_percentage_24h || 0,
+        marketCap: coin.market_cap * USD_TO_ZAR,
+        volume: coin.total_volume * USD_TO_ZAR,
+        icon: iconMap[coin.symbol.toUpperCase()] || '💎'
+      }));
+
+      setCryptoCoins(transformedCoins);
+      setLastUpdated(new Date());
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Error fetching crypto data:', err);
+      setError(err.message);
+      setIsLoading(false);
+
+      // Fallback to mock data if API fails
+      loadFallbackData();
+    }
+  };
+
+  // Fallback data in case API fails
+  const loadFallbackData = () => {
+    const fallbackCoins = [
+      { rank: 1, name: 'Bitcoin', symbol: 'BTC', price: 1045678.50, change24h: 2.34, marketCap: 20500000000000, volume: 850000000000, icon: '₿' },
+      { rank: 2, name: 'Ethereum', symbol: 'ETH', price: 38456.75, change24h: -1.23, marketCap: 4620000000000, volume: 320000000000, icon: 'Ξ' },
+      { rank: 3, name: 'Tether', symbol: 'USDT', price: 18.50, change24h: 0.01, marketCap: 2050000000000, volume: 1200000000000, icon: '₮' },
+      { rank: 4, name: 'BNB', symbol: 'BNB', price: 5678.90, change24h: 3.45, marketCap: 850000000000, volume: 45000000000, icon: '🔸' },
+      { rank: 5, name: 'Solana', symbol: 'SOL', price: 2345.80, change24h: 5.67, marketCap: 980000000000, volume: 78000000000, icon: '◎' },
+      { rank: 6, name: 'XRP', symbol: 'XRP', price: 11.25, change24h: 1.89, marketCap: 625000000000, volume: 95000000000, icon: '✕' },
+      { rank: 7, name: 'USD Coin', symbol: 'USDC', price: 18.48, change24h: -0.02, marketCap: 550000000000, volume: 180000000000, icon: '💵' },
+      { rank: 8, name: 'Cardano', symbol: 'ADA', price: 8.90, change24h: 2.15, marketCap: 315000000000, volume: 42000000000, icon: '₳' },
+      { rank: 9, name: 'Avalanche', symbol: 'AVAX', price: 678.50, change24h: 4.32, marketCap: 285000000000, volume: 35000000000, icon: '🔺' },
+      { rank: 10, name: 'Dogecoin', symbol: 'DOGE', price: 1.85, change24h: -2.45, marketCap: 265000000000, volume: 58000000000, icon: 'Ð' },
+      { rank: 11, name: 'Polkadot', symbol: 'DOT', price: 123.45, change24h: 3.21, marketCap: 185000000000, volume: 28000000000, icon: '●' },
+      { rank: 12, name: 'Polygon', symbol: 'MATIC', price: 16.75, change24h: 1.95, marketCap: 155000000000, volume: 32000000000, icon: '⬡' },
+      { rank: 13, name: 'TRON', symbol: 'TRX', price: 2.15, change24h: 0.89, marketCap: 195000000000, volume: 45000000000, icon: 'Ⓣ' },
+      { rank: 14, name: 'Chainlink', symbol: 'LINK', price: 298.60, change24h: 2.67, marketCap: 168000000000, volume: 25000000000, icon: '⬢' },
+      { rank: 15, name: 'Litecoin', symbol: 'LTC', price: 1678.90, change24h: -0.78, marketCap: 125000000000, volume: 18000000000, icon: 'Ł' },
+      { rank: 16, name: 'Uniswap', symbol: 'UNI', price: 145.30, change24h: 4.12, marketCap: 110000000000, volume: 22000000000, icon: '🦄' },
+      { rank: 17, name: 'Bitcoin Cash', symbol: 'BCH', price: 4567.80, change24h: 1.45, marketCap: 89000000000, volume: 15000000000, icon: 'Ƀ' },
+      { rank: 18, name: 'Stellar', symbol: 'XLM', price: 2.45, change24h: 3.89, marketCap: 71000000000, volume: 12000000000, icon: '*' },
+      { rank: 19, name: 'Cosmos', symbol: 'ATOM', price: 189.50, change24h: 2.34, marketCap: 75000000000, volume: 16000000000, icon: '⚛' },
+      { rank: 20, name: 'Monero', symbol: 'XMR', price: 3245.60, change24h: -1.56, marketCap: 59000000000, volume: 9000000000, icon: 'ɱ' }
+    ];
+
+    setCryptoCoins(fallbackCoins);
+    setLastUpdated(new Date());
+    setIsLoading(false);
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchCryptoData();
+  }, []);
 
   const formatCurrency = (amount) => {
     if (amount >= 1000000000000) {
@@ -98,9 +169,24 @@ function Crypto({ userEmail, onLogout, onNavigate }) {
           <div className="crypto-header">
             <div>
               <h1 className="page-title">Cryptocurrency Market</h1>
-              <p className="page-subtitle">Top 20 Cryptocurrencies by Market Cap</p>
+              <p className="page-subtitle">
+                Top 20 Cryptocurrencies by Market Cap
+                {lastUpdated && (
+                  <span style={{ fontSize: '0.8rem', marginLeft: '10px', opacity: 0.7 }}>
+                    • Last updated: {lastUpdated.toLocaleTimeString()}
+                  </span>
+                )}
+              </p>
             </div>
             <div className="view-toggle">
+              <button
+                className="toggle-btn"
+                onClick={fetchCryptoData}
+                disabled={isLoading}
+                style={{ marginRight: '10px' }}
+              >
+                🔄 {isLoading ? 'Refreshing...' : 'Refresh'}
+              </button>
               <button
                 className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
                 onClick={() => setViewMode('grid')}
@@ -116,26 +202,55 @@ function Crypto({ userEmail, onLogout, onNavigate }) {
             </div>
           </div>
 
-          {/* Market Stats */}
-          <section className="market-stats">
-            <div className="stat-box">
-              <div className="stat-label">Total Market Cap</div>
-              <div className="stat-value">{formatCurrency(totalMarketCap)}</div>
+          {/* Loading State */}
+          {isLoading && (
+            <div style={{ textAlign: 'center', padding: '40px', fontSize: '1.2rem' }}>
+              <div style={{ marginBottom: '10px' }}>⏳</div>
+              Loading cryptocurrency data...
             </div>
-            <div className="stat-box">
-              <div className="stat-label">24h Volume</div>
-              <div className="stat-value">{formatCurrency(total24hVolume)}</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-label">Bitcoin Dominance</div>
-              <div className="stat-value">
-                {((cryptoCoins[0].marketCap / totalMarketCap) * 100).toFixed(2)}%
+          )}
+
+          {/* Error State */}
+          {error && !isLoading && (
+            <div style={{
+              textAlign: 'center',
+              padding: '40px',
+              backgroundColor: '#fee',
+              borderRadius: '8px',
+              margin: '20px 0',
+              color: '#c00'
+            }}>
+              <div style={{ marginBottom: '10px', fontSize: '2rem' }}>⚠️</div>
+              <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>Failed to fetch live data</div>
+              <div>{error}</div>
+              <div style={{ marginTop: '10px', fontSize: '0.9rem', opacity: 0.8 }}>
+                Showing fallback data instead
               </div>
             </div>
-          </section>
+          )}
+
+          {/* Market Stats */}
+          {!isLoading && cryptoCoins.length > 0 && (
+            <section className="market-stats">
+              <div className="stat-box">
+                <div className="stat-label">Total Market Cap</div>
+                <div className="stat-value">{formatCurrency(totalMarketCap)}</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-label">24h Volume</div>
+                <div className="stat-value">{formatCurrency(total24hVolume)}</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-label">Bitcoin Dominance</div>
+                <div className="stat-value">
+                  {((cryptoCoins[0].marketCap / totalMarketCap) * 100).toFixed(2)}%
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Crypto List */}
-          {viewMode === 'list' ? (
+          {!isLoading && cryptoCoins.length > 0 && viewMode === 'list' && (
             <section className="crypto-table-section">
               <table className="crypto-table">
                 <thead>
@@ -170,7 +285,10 @@ function Crypto({ userEmail, onLogout, onNavigate }) {
                 </tbody>
               </table>
             </section>
-          ) : (
+          )}
+
+          {/* Crypto Grid */}
+          {!isLoading && cryptoCoins.length > 0 && viewMode === 'grid' && (
             <section className="crypto-grid">
               {cryptoCoins.map((coin) => (
                 <div key={coin.rank} className="crypto-card">
