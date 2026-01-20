@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './Dashboard.css';
 
-function Dashboard({ userEmail, onLogout }) {
+function Dashboard({ userEmail, onLogout, onNavigate }) {
   const [selectedAccount, setSelectedAccount] = useState('checking');
 
   const accounts = {
@@ -49,13 +49,21 @@ function Dashboard({ userEmail, onLogout }) {
               <span className="nav-icon">🏠</span>
               <span>Dashboard</span>
             </button>
-            <button className="nav-item">
+            <button className="nav-item" onClick={() => onNavigate('accounts')}>
               <span className="nav-icon">💰</span>
               <span>Accounts</span>
             </button>
-            <button className="nav-item">
+            <button className="nav-item" onClick={() => onNavigate('investments')}>
               <span className="nav-icon">📈</span>
               <span>Investments</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('crypto')}>
+              <span className="nav-icon">₿</span>
+              <span>Crypto</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('health')}>
+              <span className="nav-icon">❤️</span>
+              <span>Health & Fitness</span>
             </button>
             <button className="nav-item">
               <span className="nav-icon">🎯</span>
