@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './Settings.css';
+import './Dashboard.css';
 
 function Settings({ userEmail, token, onLogout, onNavigate }) {
   const [settings, setSettings] = useState(null);
@@ -67,7 +67,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       city: settingsData.city || '',
       postal_code: settingsData.postal_code || '',
       country: settingsData.country || 'South Africa',
-      daily_limit: (settingsData.daily_limit || 500000) / 100, // Convert cents to rands
+      daily_limit: (settingsData.daily_limit || 500000) / 100,
       monthly_limit: (settingsData.monthly_limit || 5000000) / 100,
       card_enabled: settingsData.card_enabled !== false,
       contactless_enabled: settingsData.contactless_enabled !== false,
@@ -92,7 +92,6 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       setError('');
       setSuccess('');
 
-      // Convert rands to cents for limits
       const updatedSettings = {
         ...formData,
         daily_limit: Math.round(parseFloat(formData.daily_limit) * 100),
@@ -132,256 +131,253 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
   if (loading) {
     return (
-      <div className="settings-container">
-        <div className="settings-loading">Loading settings...</div>
+      <div className="dashboard">
+        <div className="loading-message">Loading settings...</div>
       </div>
     );
   }
 
   return (
-    <div className="banking-app">
-      {/* Sidebar Navigation */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <h2>TestAiApp</h2>
+    <div className="dashboard">
+      {/* Header */}
+      <header className="dashboard-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <h1 className="logo">💳 BankApp</h1>
+          </div>
+          <div className="user-section">
+            <span className="user-email">{userEmail}</span>
+            <button className="logout-btn" onClick={onLogout}>Logout</button>
+          </div>
         </div>
-        <nav className="sidebar-nav">
-          <button
-            className="nav-item"
-            onClick={() => onNavigate('dashboard')}
-          >
-            <span className="nav-icon">📊</span>
-            <span className="nav-text">Dashboard</span>
-          </button>
-          <button
-            className="nav-item"
-            onClick={() => onNavigate('accounts')}
-          >
-            <span className="nav-icon">🏦</span>
-            <span className="nav-text">Accounts</span>
-          </button>
-          <button
-            className="nav-item"
-            onClick={() => onNavigate('investments')}
-          >
-            <span className="nav-icon">📈</span>
-            <span className="nav-text">Investments</span>
-          </button>
-          <button
-            className="nav-item"
-            onClick={() => onNavigate('crypto')}
-          >
-            <span className="nav-icon">₿</span>
-            <span className="nav-text">Crypto</span>
-          </button>
-          <button
-            className="nav-item"
-            onClick={() => onNavigate('health')}
-          >
-            <span className="nav-icon">💪</span>
-            <span className="nav-text">Health & Fitness</span>
-          </button>
-          <button
-            className="nav-item active"
-            onClick={() => onNavigate('settings')}
-          >
-            <span className="nav-icon">⚙️</span>
-            <span className="nav-text">Settings</span>
-          </button>
-        </nav>
-      </aside>
+      </header>
 
       {/* Main Content */}
-      <main className="main-content">
-        <header className="main-header">
-          <div className="header-left">
-            <h1>Settings</h1>
-            <p className="subtitle">Manage your account settings and preferences</p>
-          </div>
-          <div className="header-right">
-            <div className="user-info">
-              <span className="user-email">{userEmail}</span>
-            </div>
-            <button className="logout-btn" onClick={onLogout}>
-              Logout
+      <div className="dashboard-content">
+        {/* Sidebar */}
+        <aside className="sidebar">
+          <nav className="nav-menu">
+            <button className="nav-item" onClick={() => onNavigate('dashboard')}>
+              <span className="nav-icon">🏠</span>
+              <span>Dashboard</span>
             </button>
-          </div>
-        </header>
-
-        <div className="settings-content">
-          {error && <div className="alert alert-error">{error}</div>}
-          {success && <div className="alert alert-success">{success}</div>}
-
-          {/* Address Section */}
-          <section className="settings-section">
-            <h2 className="section-title">Address Information</h2>
-            <div className="settings-grid">
-              <div className="form-group">
-                <label htmlFor="street_address">Street Address</label>
-                <input
-                  type="text"
-                  id="street_address"
-                  name="street_address"
-                  value={formData.street_address}
-                  onChange={handleInputChange}
-                  placeholder="123 Main Street"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="city">City</label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  placeholder="Johannesburg"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="postal_code">Postal Code</label>
-                <input
-                  type="text"
-                  id="postal_code"
-                  name="postal_code"
-                  value={formData.postal_code}
-                  onChange={handleInputChange}
-                  placeholder="2000"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="country">Country</label>
-                <input
-                  type="text"
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  placeholder="South Africa"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Transaction Limits Section */}
-          <section className="settings-section">
-            <h2 className="section-title">Transaction Limits</h2>
-            <div className="settings-grid">
-              <div className="form-group">
-                <label htmlFor="daily_limit">Daily Limit (ZAR)</label>
-                <input
-                  type="number"
-                  id="daily_limit"
-                  name="daily_limit"
-                  value={formData.daily_limit}
-                  onChange={handleInputChange}
-                  min="0"
-                  step="100"
-                />
-                <small className="form-help">Maximum daily transaction limit</small>
-              </div>
-              <div className="form-group">
-                <label htmlFor="monthly_limit">Monthly Limit (ZAR)</label>
-                <input
-                  type="number"
-                  id="monthly_limit"
-                  name="monthly_limit"
-                  value={formData.monthly_limit}
-                  onChange={handleInputChange}
-                  min="0"
-                  step="1000"
-                />
-                <small className="form-help">Maximum monthly transaction limit</small>
-              </div>
-            </div>
-          </section>
-
-          {/* Card Settings Section */}
-          <section className="settings-section">
-            <h2 className="section-title">Card Settings</h2>
-            <div className="settings-toggles">
-              <div className="toggle-item">
-                <div className="toggle-info">
-                  <h3>Card Enabled</h3>
-                  <p>Enable or disable your card</p>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="card_enabled"
-                    checked={formData.card_enabled}
-                    onChange={handleInputChange}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              <div className="toggle-item">
-                <div className="toggle-info">
-                  <h3>Contactless Payments</h3>
-                  <p>Enable tap-to-pay functionality</p>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="contactless_enabled"
-                    checked={formData.contactless_enabled}
-                    onChange={handleInputChange}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              <div className="toggle-item">
-                <div className="toggle-info">
-                  <h3>Online Payments</h3>
-                  <p>Allow online purchases with your card</p>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="online_payments_enabled"
-                    checked={formData.online_payments_enabled}
-                    onChange={handleInputChange}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-              <div className="toggle-item">
-                <div className="toggle-info">
-                  <h3>International Transactions</h3>
-                  <p>Allow transactions outside South Africa</p>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="international_transactions_enabled"
-                    checked={formData.international_transactions_enabled}
-                    onChange={handleInputChange}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          {/* Action Buttons */}
-          <div className="settings-actions">
-            <button
-              className="btn-secondary"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              Cancel
+            <button className="nav-item" onClick={() => onNavigate('accounts')}>
+              <span className="nav-icon">💰</span>
+              <span>Accounts</span>
             </button>
-            <button
-              className="btn-primary"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
+            <button className="nav-item" onClick={() => onNavigate('investments')}>
+              <span className="nav-icon">📈</span>
+              <span>Investments</span>
             </button>
+            <button className="nav-item" onClick={() => onNavigate('crypto')}>
+              <span className="nav-icon">₿</span>
+              <span>Crypto</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('health')}>
+              <span className="nav-icon">❤️</span>
+              <span>Health & Fitness</span>
+            </button>
+            <button className="nav-item">
+              <span className="nav-icon">🎯</span>
+              <span>Goals</span>
+            </button>
+            <button className="nav-item active">
+              <span className="nav-icon">⚙️</span>
+              <span>Settings</span>
+            </button>
+          </nav>
+        </aside>
+
+        {/* Main Panel */}
+        <main className="main-panel">
+          <div className="panel-header">
+            <h2 className="panel-title">Account Settings</h2>
+            <p className="panel-subtitle">Manage your personal information and preferences</p>
           </div>
-        </div>
-      </main>
+
+          {error && (
+            <div className="alert-banner error">
+              <span>⚠️</span> {error}
+            </div>
+          )}
+          {success && (
+            <div className="alert-banner success">
+              <span>✅</span> {success}
+            </div>
+          )}
+
+          <div className="settings-container">
+            {/* Address Information */}
+            <div className="settings-card">
+              <h3 className="card-title">Address Information</h3>
+              <div className="settings-form-grid">
+                <div className="form-field">
+                  <label>Street Address</label>
+                  <input
+                    type="text"
+                    name="street_address"
+                    value={formData.street_address}
+                    onChange={handleInputChange}
+                    placeholder="123 Main Street"
+                    className="input-field"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    placeholder="Johannesburg"
+                    className="input-field"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Postal Code</label>
+                  <input
+                    type="text"
+                    name="postal_code"
+                    value={formData.postal_code}
+                    onChange={handleInputChange}
+                    placeholder="2000"
+                    className="input-field"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    placeholder="South Africa"
+                    className="input-field"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Transaction Limits */}
+            <div className="settings-card">
+              <h3 className="card-title">Transaction Limits</h3>
+              <div className="settings-form-grid">
+                <div className="form-field">
+                  <label>Daily Limit (R)</label>
+                  <input
+                    type="number"
+                    name="daily_limit"
+                    value={formData.daily_limit}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="100"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Maximum daily spending limit</small>
+                </div>
+                <div className="form-field">
+                  <label>Monthly Limit (R)</label>
+                  <input
+                    type="number"
+                    name="monthly_limit"
+                    value={formData.monthly_limit}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="1000"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Maximum monthly spending limit</small>
+                </div>
+              </div>
+            </div>
+
+            {/* Card Preferences */}
+            <div className="settings-card">
+              <h3 className="card-title">Card Preferences</h3>
+              <div className="toggle-list">
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">Card Enabled</div>
+                    <div className="toggle-description">Enable or disable your physical card</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="card_enabled"
+                      checked={formData.card_enabled}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">Contactless Payments</div>
+                    <div className="toggle-description">Enable tap-to-pay functionality</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="contactless_enabled"
+                      checked={formData.contactless_enabled}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">Online Payments</div>
+                    <div className="toggle-description">Allow online purchases with your card</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="online_payments_enabled"
+                      checked={formData.online_payments_enabled}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">International Transactions</div>
+                    <div className="toggle-description">Allow transactions outside South Africa</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="international_transactions_enabled"
+                      checked={formData.international_transactions_enabled}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="settings-actions">
+              <button
+                className="btn-cancel"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-save"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

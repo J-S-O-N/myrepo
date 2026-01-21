@@ -69,7 +69,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
               <span className="nav-icon">🎯</span>
               <span>Goals</span>
             </button>
-            <button className="nav-item">
+            <button className="nav-item" onClick={() => onNavigate('settings')}>
               <span className="nav-icon">⚙️</span>
               <span>Settings</span>
             </button>
