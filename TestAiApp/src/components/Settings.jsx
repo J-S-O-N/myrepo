@@ -15,10 +15,17 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
     country: 'South Africa',
     daily_limit: 5000,
     monthly_limit: 50000,
+    mobile_app_limit: 3000,
+    internet_banking_limit: 10000,
+    atm_limit: 2000,
     card_enabled: true,
     contactless_enabled: true,
     online_payments_enabled: true,
     international_transactions_enabled: false,
+    email_notifications: true,
+    sms_notifications: true,
+    whatsapp_notifications: false,
+    in_app_notifications: true,
   });
 
   useEffect(() => {
@@ -69,10 +76,17 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       country: settingsData.country || 'South Africa',
       daily_limit: (settingsData.daily_limit || 500000) / 100,
       monthly_limit: (settingsData.monthly_limit || 5000000) / 100,
+      mobile_app_limit: (settingsData.mobile_app_limit || 300000) / 100,
+      internet_banking_limit: (settingsData.internet_banking_limit || 1000000) / 100,
+      atm_limit: (settingsData.atm_limit || 200000) / 100,
       card_enabled: settingsData.card_enabled !== false,
       contactless_enabled: settingsData.contactless_enabled !== false,
       online_payments_enabled: settingsData.online_payments_enabled !== false,
       international_transactions_enabled: settingsData.international_transactions_enabled === true,
+      email_notifications: settingsData.email_notifications !== false,
+      sms_notifications: settingsData.sms_notifications !== false,
+      whatsapp_notifications: settingsData.whatsapp_notifications === true,
+      in_app_notifications: settingsData.in_app_notifications !== false,
     });
   };
 
@@ -96,6 +110,9 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         ...formData,
         daily_limit: Math.round(parseFloat(formData.daily_limit) * 100),
         monthly_limit: Math.round(parseFloat(formData.monthly_limit) * 100),
+        mobile_app_limit: Math.round(parseFloat(formData.mobile_app_limit) * 100),
+        internet_banking_limit: Math.round(parseFloat(formData.internet_banking_limit) * 100),
+        atm_limit: Math.round(parseFloat(formData.atm_limit) * 100),
       };
 
       const response = await fetch('http://localhost:3001/api/settings', {
@@ -288,6 +305,45 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   />
                   <small className="field-hint">Maximum monthly spending limit</small>
                 </div>
+                <div className="form-field">
+                  <label>Mobile App Limit (R)</label>
+                  <input
+                    type="number"
+                    name="mobile_app_limit"
+                    value={formData.mobile_app_limit}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="100"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Maximum limit for mobile app transactions</small>
+                </div>
+                <div className="form-field">
+                  <label>Internet Banking Limit (R)</label>
+                  <input
+                    type="number"
+                    name="internet_banking_limit"
+                    value={formData.internet_banking_limit}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="100"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Maximum limit for internet banking transactions</small>
+                </div>
+                <div className="form-field">
+                  <label>ATM Limit (R)</label>
+                  <input
+                    type="number"
+                    name="atm_limit"
+                    value={formData.atm_limit}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="100"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Maximum limit for ATM withdrawals</small>
+                </div>
               </div>
             </div>
 
@@ -350,6 +406,73 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                       type="checkbox"
                       name="international_transactions_enabled"
                       checked={formData.international_transactions_enabled}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Communication Preferences */}
+            <div className="settings-card">
+              <h3 className="card-title">Communication Preferences</h3>
+              <div className="toggle-list">
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">Email Notifications</div>
+                    <div className="toggle-description">Receive notifications via email</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="email_notifications"
+                      checked={formData.email_notifications}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">SMS Notifications</div>
+                    <div className="toggle-description">Receive notifications via SMS</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="sms_notifications"
+                      checked={formData.sms_notifications}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">WhatsApp Notifications</div>
+                    <div className="toggle-description">Receive notifications via WhatsApp</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="whatsapp_notifications"
+                      checked={formData.whatsapp_notifications}
+                      onChange={handleInputChange}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+                <div className="toggle-row">
+                  <div className="toggle-info">
+                    <div className="toggle-label">In-App Notifications</div>
+                    <div className="toggle-description">Receive notifications within the app</div>
+                  </div>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      name="in_app_notifications"
+                      checked={formData.in_app_notifications}
                       onChange={handleInputChange}
                     />
                     <span className="toggle-slider"></span>

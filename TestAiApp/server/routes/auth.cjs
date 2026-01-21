@@ -47,10 +47,17 @@ router.post(
         country: 'South Africa',
         daily_limit: 500000, // R 5,000.00
         monthly_limit: 5000000, // R 50,000.00
+        mobile_app_limit: 300000, // R 3,000.00
+        internet_banking_limit: 1000000, // R 10,000.00
+        atm_limit: 200000, // R 2,000.00
         card_enabled: true,
         contactless_enabled: true,
         online_payments_enabled: true,
         international_transactions_enabled: false,
+        email_notifications: true,
+        sms_notifications: true,
+        whatsapp_notifications: false,
+        in_app_notifications: true,
       });
 
       // Generate JWT token

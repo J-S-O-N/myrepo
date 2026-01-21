@@ -43,6 +43,18 @@ const UserSettings = sequelize.define('UserSettings', {
     type: DataTypes.INTEGER,
     defaultValue: 5000000, // R 50,000.00
   },
+  mobile_app_limit: {
+    type: DataTypes.INTEGER,
+    defaultValue: 300000, // R 3,000.00
+  },
+  internet_banking_limit: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1000000, // R 10,000.00
+  },
+  atm_limit: {
+    type: DataTypes.INTEGER,
+    defaultValue: 200000, // R 2,000.00
+  },
   // Card Settings
   card_enabled: {
     type: DataTypes.BOOLEAN,
@@ -59,6 +71,23 @@ const UserSettings = sequelize.define('UserSettings', {
   international_transactions_enabled: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  // Communication Preferences
+  email_notifications: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  sms_notifications: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  whatsapp_notifications: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  in_app_notifications: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
 }, {
   tableName: 'user_settings',

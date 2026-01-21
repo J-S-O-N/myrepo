@@ -36,10 +36,17 @@ router.put(
     body('country').optional().isString(),
     body('daily_limit').optional().isInt({ min: 0 }),
     body('monthly_limit').optional().isInt({ min: 0 }),
+    body('mobile_app_limit').optional().isInt({ min: 0 }),
+    body('internet_banking_limit').optional().isInt({ min: 0 }),
+    body('atm_limit').optional().isInt({ min: 0 }),
     body('card_enabled').optional().isBoolean(),
     body('contactless_enabled').optional().isBoolean(),
     body('online_payments_enabled').optional().isBoolean(),
     body('international_transactions_enabled').optional().isBoolean(),
+    body('email_notifications').optional().isBoolean(),
+    body('sms_notifications').optional().isBoolean(),
+    body('whatsapp_notifications').optional().isBoolean(),
+    body('in_app_notifications').optional().isBoolean(),
   ],
   async (req, res) => {
     try {
@@ -66,10 +73,17 @@ router.put(
         'country',
         'daily_limit',
         'monthly_limit',
+        'mobile_app_limit',
+        'internet_banking_limit',
+        'atm_limit',
         'card_enabled',
         'contactless_enabled',
         'online_payments_enabled',
         'international_transactions_enabled',
+        'email_notifications',
+        'sms_notifications',
+        'whatsapp_notifications',
+        'in_app_notifications',
       ];
 
       const updates = {};
@@ -108,10 +122,17 @@ router.post('/initialize', async (req, res) => {
       country: 'South Africa',
       daily_limit: 500000, // R 5,000.00
       monthly_limit: 5000000, // R 50,000.00
+      mobile_app_limit: 300000, // R 3,000.00
+      internet_banking_limit: 1000000, // R 10,000.00
+      atm_limit: 200000, // R 2,000.00
       card_enabled: true,
       contactless_enabled: true,
       online_payments_enabled: true,
       international_transactions_enabled: false,
+      email_notifications: true,
+      sms_notifications: true,
+      whatsapp_notifications: false,
+      in_app_notifications: true,
     });
 
     res.status(201).json({ settings });
