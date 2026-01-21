@@ -5,21 +5,26 @@ import Health from './components/Health';
 import Accounts from './components/Accounts';
 import Investments from './components/Investments';
 import Crypto from './components/Crypto';
+import Settings from './components/Settings';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [token, setToken] = useState('');
   const [currentPage, setCurrentPage] = useState('dashboard');
 
-  const handleLogin = (email) => {
+  const handleLogin = (email, authToken) => {
     setUserEmail(email);
+    setToken(authToken);
     setIsAuthenticated(true);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserEmail('');
+    setToken('');
     setCurrentPage('dashboard');
+    sessionStorage.removeItem('token');
   };
 
   const handleNavigate = (page) => {
@@ -28,6 +33,10 @@ function App() {
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
+  }
+
+  if (currentPage === 'settings') {
+    return <Settings userEmail={userEmail} token={token} onLogout={handleLogout} onNavigate={handleNavigate} />;
   }
 
   if (currentPage === 'health') {

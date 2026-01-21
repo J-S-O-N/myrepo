@@ -60,11 +60,47 @@ function Login({ onLogin }) {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Try login first
+      let response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      // If login fails with 401, try to register
+      if (response.status === 401) {
+        response = await fetch('http://localhost:3001/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Authentication failed');
+      }
+
+      // Store token and call onLogin with email and token
+      sessionStorage.setItem('token', data.token);
       setIsLoading(false);
-      onLogin(formData.email);
-    }, 1000);
+      onLogin(formData.email, data.token);
+    } catch (error) {
+      setIsLoading(false);
+      setErrors({ general: error.message });
+    }
   };
 
   return (
@@ -76,6 +112,10 @@ function Login({ onLogin }) {
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
+          {errors.general && (
+            <div className="error-message general-error">{errors.general}</div>
+          )}
+
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -116,7 +156,7 @@ function Login({ onLogin }) {
         </form>
 
         <div className="login-footer">
-          <p className="demo-note">Demo: Use any email and password (8+ characters)</p>
+          <p className="demo-note">Enter any email and password (8+ characters) to login or register</p>
         </div>
       </div>
     </div>
