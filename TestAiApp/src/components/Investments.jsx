@@ -126,17 +126,21 @@ function Investments({ userEmail, onLogout, onNavigate }) {
               <span className="nav-icon">📈</span>
               <span>Investments</span>
             </button>
-            <button className="nav-item" onClick={() => onNavigate('crypto')}>
-              <span className="nav-icon">₿</span>
-              <span>Crypto</span>
-            </button>
             <button className="nav-item" onClick={() => onNavigate('health')}>
               <span className="nav-icon">❤️</span>
               <span>Health & Fitness</span>
             </button>
-            <button className="nav-item">
+            <button className="nav-item" onClick={() => onNavigate('goals')}>
               <span className="nav-icon">🎯</span>
               <span>Goals</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('buyhub')}>
+              <span className="nav-icon">🛒</span>
+              <span>Buy Hub</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('crypto')}>
+              <span className="nav-icon">₿</span>
+              <span>Crypto</span>
             </button>
             <button className="nav-item" onClick={() => onNavigate('settings')}>
               <span className="nav-icon">⚙️</span>

@@ -5,6 +5,8 @@ import Health from './components/Health';
 import Accounts from './components/Accounts';
 import Investments from './components/Investments';
 import Crypto from './components/Crypto';
+import BuyHub from './components/BuyHub';
+import Goals from './components/Goals';
 import Settings from './components/Settings';
 
 function App() {
@@ -49,6 +51,14 @@ function App() {
 
   if (currentPage === 'investments') {
     return <Investments userEmail={userEmail} onLogout={handleLogout} onNavigate={handleNavigate} />;
+  }
+
+  if (currentPage === 'goals') {
+    return <Goals userEmail={userEmail} token={token} onLogout={handleLogout} onNavigate={handleNavigate} />;
+  }
+
+  if (currentPage === 'buyhub') {
+    return <BuyHub userEmail={userEmail} onLogout={handleLogout} onNavigate={handleNavigate} />;
   }
 
   if (currentPage === 'crypto') {

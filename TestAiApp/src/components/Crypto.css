@@ -41,6 +41,37 @@
   color: white;
 }
 
+/* Currency Selector */
+.currency-selector {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  margin-right: 0.5rem;
+}
+
+.currency-selector:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.currency-selector:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.currency-selector option {
+  padding: 0.5rem;
+  background: white;
+  color: #374151;
+}
+
 /* Market Stats */
 .market-stats {
   display: grid;

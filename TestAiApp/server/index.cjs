@@ -3,6 +3,7 @@ const cors = require('cors');
 const { syncDatabase } = require('./models/index.cjs');
 const authRoutes = require('./routes/auth.cjs');
 const settingsRoutes = require('./routes/settings.cjs');
+const goalsRoutes = require('./routes/goals.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/goals', goalsRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

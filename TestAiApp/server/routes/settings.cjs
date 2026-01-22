@@ -65,6 +65,28 @@ router.put(
         return res.status(404).json({ error: 'Settings not found' });
       }
 
+      // Get the effective values (use new value if provided, otherwise use existing)
+      const dailyLimit = req.body.daily_limit !== undefined ? req.body.daily_limit : settings.daily_limit;
+      const monthlyLimit = req.body.monthly_limit !== undefined ? req.body.monthly_limit : settings.monthly_limit;
+      const mobileAppLimit = req.body.mobile_app_limit !== undefined ? req.body.mobile_app_limit : settings.mobile_app_limit;
+      const internetBankingLimit = req.body.internet_banking_limit !== undefined ? req.body.internet_banking_limit : settings.internet_banking_limit;
+      const atmLimit = req.body.atm_limit !== undefined ? req.body.atm_limit : settings.atm_limit;
+
+      // Validate: daily limit cannot exceed monthly limit
+      if (dailyLimit > monthlyLimit) {
+        return res.status(400).json({
+          error: 'Daily limit cannot exceed monthly limit'
+        });
+      }
+
+      // Validate: sum of all limits cannot be less than monthly limit
+      const sumOfLimits = dailyLimit + mobileAppLimit + internetBankingLimit + atmLimit;
+      if (sumOfLimits > monthlyLimit) {
+        return res.status(400).json({
+          error: 'Sum of daily, mobile app, internet banking, and ATM limits cannot be >  monthly limit'
+        });
+      }
+
       // Update only allowed fields
       const allowedFields = [
         'street_address',

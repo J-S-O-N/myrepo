@@ -100,11 +100,40 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
     setError('');
   };
 
+  const validateTransactionLimits = () => {
+    const dailyLimit = parseFloat(formData.daily_limit) || 0;
+    const monthlyLimit = parseFloat(formData.monthly_limit) || 0;
+    const mobileAppLimit = parseFloat(formData.mobile_app_limit) || 0;
+    const internetBankingLimit = parseFloat(formData.internet_banking_limit) || 0;
+    const atmLimit = parseFloat(formData.atm_limit) || 0;
+
+    // Rule 1: Daily limit cannot exceed monthly limit
+    if (dailyLimit > monthlyLimit) {
+      return 'Daily limit cannot exceed monthly limit';
+    }
+
+    // Rule 2: Sum of all limits cannot be less than monthly limit
+    const sumOfLimits = dailyLimit + mobileAppLimit + internetBankingLimit + atmLimit;
+    if (sumOfLimits > monthlyLimit) {
+      return 'Sum of daily, mobile app, internet banking, and ATM limits cannot be > than monthly limit';
+    }
+
+    return null;
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
       setError('');
       setSuccess('');
+
+      // Validate transaction limits before submitting
+      const validationError = validateTransactionLimits();
+      if (validationError) {
+        setError(validationError);
+        setSaving(false);
+        return;
+      }
 
       const updatedSettings = {
         ...formData,
@@ -125,7 +154,8 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save settings');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save settings');
       }
 
       const data = await response.json();
@@ -186,17 +216,21 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
               <span className="nav-icon">📈</span>
               <span>Investments</span>
             </button>
-            <button className="nav-item" onClick={() => onNavigate('crypto')}>
-              <span className="nav-icon">₿</span>
-              <span>Crypto</span>
-            </button>
             <button className="nav-item" onClick={() => onNavigate('health')}>
               <span className="nav-icon">❤️</span>
               <span>Health & Fitness</span>
             </button>
-            <button className="nav-item">
+            <button className="nav-item" onClick={() => onNavigate('goals')}>
               <span className="nav-icon">🎯</span>
               <span>Goals</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('buyhub')}>
+              <span className="nav-icon">🛒</span>
+              <span>Buy Hub</span>
+            </button>
+            <button className="nav-item" onClick={() => onNavigate('crypto')}>
+              <span className="nav-icon">₿</span>
+              <span>Crypto</span>
             </button>
             <button className="nav-item active">
               <span className="nav-icon">⚙️</span>

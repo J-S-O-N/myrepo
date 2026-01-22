@@ -1,6 +1,7 @@
 const sequelize = require('../config/database.cjs');
 const User = require('./User.cjs');
 const UserSettings = require('./UserSettings.cjs');
+const Goal = require('./Goal.cjs');
 
 // Define associations (one-to-one relationship)
 User.hasOne(UserSettings, {
@@ -10,6 +11,18 @@ User.hasOne(UserSettings, {
 });
 
 UserSettings.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
+// Define associations (one-to-many relationship for goals)
+User.hasMany(Goal, {
+  foreignKey: 'user_id',
+  onDelete: 'CASCADE',
+  as: 'goals',
+});
+
+Goal.belongsTo(User, {
   foreignKey: 'user_id',
   as: 'user',
 });
@@ -28,5 +41,6 @@ module.exports = {
   sequelize,
   User,
   UserSettings,
+  Goal,
   syncDatabase,
 };
