@@ -9,8 +9,8 @@ WORKDIR /app/frontend
 COPY TestAiApp/package*.json ./
 COPY TestAiApp/vite.config.js ./
 
-# Install frontend dependencies
-RUN npm ci --only=production
+# Install frontend dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy frontend source
 COPY TestAiApp/src ./src
