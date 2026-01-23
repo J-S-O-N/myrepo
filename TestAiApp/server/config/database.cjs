@@ -1,28 +1,37 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+const dialect = process.env.DB_DIALECT || 'sqlite';
+const config = {
+  dialect: dialect,
+  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  define: {
+    timestamps: true,
+    underscored: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  },
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+};
+
+// SQLite uses storage, PostgreSQL uses host/port/database
+if (dialect === 'sqlite') {
+  config.storage = process.env.DB_STORAGE || './server/database.sqlite';
+} else {
+  config.host = process.env.DB_HOST || 'localhost';
+  config.port = process.env.DB_PORT || 5432;
+}
+
 const sequelize = new Sequelize(
   process.env.DB_NAME || 'testaiapp',
-  process.env.DB_USER || 'jonathan.singh',
+  process.env.DB_USER || 'root',
   process.env.DB_PASSWORD || '',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    dialect: process.env.DB_DIALECT || 'postgres',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    define: {
-      timestamps: true,
-      underscored: false,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-  }
+  config
 );
 
 module.exports = sequelize;

@@ -42,7 +42,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log(`✅ Server running on http://localhost:${PORT}`);
       console.log(`✅ Environment: ${process.env.NODE_ENV}`);
-      console.log(`✅ Database: PostgreSQL`);
+      console.log(`✅ Database: ${process.env.DB_DIALECT || 'sqlite'}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
