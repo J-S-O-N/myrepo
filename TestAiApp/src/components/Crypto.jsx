@@ -218,6 +218,10 @@ function Crypto({ userEmail, onLogout, onNavigate }) {
               <span className="nav-icon">₿</span>
               <span>Crypto</span>
             </button>
+            <button className="nav-item" onClick={() => onNavigate('stocks')}>
+              <span className="nav-icon">📊</span>
+              <span>Stock Performance</span>
+            </button>
             <button className="nav-item" onClick={() => onNavigate('settings')}>
               <span className="nav-icon">⚙️</span>
               <span>Settings</span>

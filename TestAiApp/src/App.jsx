@@ -7,6 +7,7 @@ import Investments from './components/Investments';
 import Crypto from './components/Crypto';
 import BuyHub from './components/BuyHub';
 import Goals from './components/Goals';
+import StockPerformance from './components/StockPerformance';
 import Settings from './components/Settings';
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
 
   if (currentPage === 'crypto') {
     return <Crypto userEmail={userEmail} onLogout={handleLogout} onNavigate={handleNavigate} />;
+  }
+
+  if (currentPage === 'stocks') {
+    return <StockPerformance userEmail={userEmail} onLogout={handleLogout} onNavigate={handleNavigate} />;
   }
 
   return <Dashboard userEmail={userEmail} onLogout={handleLogout} onNavigate={handleNavigate} />;
