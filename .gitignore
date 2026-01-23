@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+TestAiApp/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+*.env
+
+# Database
+*.sqlite
+*.db
+server/database.sqlite
+
+# Terraform
+**/.terraform/*
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform.tfstate.lock.info
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+TestAiApp/dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.bak
+*.tmp
+.cache/
