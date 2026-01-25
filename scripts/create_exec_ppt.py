@@ -796,12 +796,566 @@ def create_exec_presentation(output_file):
         contact_para.font.color.rgb = LIGHT_GRAY
         contact_para.alignment = PP_ALIGN.CENTER
 
+    def add_market_opportunity():
+        """Slide 10: Market Opportunity"""
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        # Title
+        title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.3), Inches(12.333), Inches(0.8))
+        title_frame = title_box.text_frame
+        title_frame.text = "📊 Market Opportunity"
+        title_para = title_frame.paragraphs[0]
+        title_para.font.size = Pt(44)
+        title_para.font.bold = True
+        title_para.font.color.rgb = PRIMARY_BLUE
+
+        # Market stats boxes
+        stats = [
+            ("Digital Banking Users", "2.5B+", "Global Market 2026", ACCENT_GREEN),
+            ("South Africa Market", "38M", "Banked Population", PRIMARY_BLUE),
+            ("Mobile Banking", "73%", "Adoption Rate SA", ACCENT_ORANGE),
+            ("Market Growth", "12.5%", "CAGR 2024-2030", DARK_BLUE)
+        ]
+
+        box_width = 2.8
+        spacing = 0.3
+        start_x = 0.5
+
+        for i, (label, value, desc, color) in enumerate(stats):
+            x = start_x + i * (box_width + spacing)
+
+            # Box
+            box = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(x), Inches(1.5),
+                Inches(box_width), Inches(1.5)
+            )
+            box.fill.solid()
+            box.fill.fore_color.rgb = color
+            box.line.fill.background()
+
+            # Value (large)
+            value_box = slide.shapes.add_textbox(
+                Inches(x), Inches(1.7),
+                Inches(box_width), Inches(0.6)
+            )
+            value_frame = value_box.text_frame
+            value_frame.text = value
+            value_para = value_frame.paragraphs[0]
+            value_para.font.size = Pt(40)
+            value_para.font.bold = True
+            value_para.font.color.rgb = WHITE
+            value_para.alignment = PP_ALIGN.CENTER
+
+            # Label
+            label_box = slide.shapes.add_textbox(
+                Inches(x + 0.1), Inches(2.3),
+                Inches(box_width - 0.2), Inches(0.4)
+            )
+            label_frame = label_box.text_frame
+            label_frame.text = label
+            label_frame.word_wrap = True
+            label_para = label_frame.paragraphs[0]
+            label_para.font.size = Pt(14)
+            label_para.font.bold = True
+            label_para.font.color.rgb = WHITE
+            label_para.alignment = PP_ALIGN.CENTER
+
+            # Description
+            desc_box = slide.shapes.add_textbox(
+                Inches(x + 0.1), Inches(2.7),
+                Inches(box_width - 0.2), Inches(0.3)
+            )
+            desc_frame = desc_box.text_frame
+            desc_frame.text = desc
+            desc_frame.word_wrap = True
+            desc_para = desc_frame.paragraphs[0]
+            desc_para.font.size = Pt(11)
+            desc_para.font.color.rgb = WHITE
+            desc_para.alignment = PP_ALIGN.CENTER
+
+        # Target segments
+        segment_title = slide.shapes.add_textbox(
+            Inches(0.5), Inches(3.3),
+            Inches(12.333), Inches(0.4)
+        )
+        segment_title.text_frame.text = "Target Market Segments"
+        segment_title.text_frame.paragraphs[0].font.size = Pt(24)
+        segment_title.text_frame.paragraphs[0].font.bold = True
+        segment_title.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+        segments = [
+            ("💼 SME Banking", "Small & medium enterprises requiring comprehensive financial management"),
+            ("👥 Retail Banking", "Individual customers seeking modern, mobile-first banking experience"),
+            ("🏢 Corporate Banking", "Enterprises needing multi-account management and treasury services"),
+            ("🌍 International", "Cross-border payments and multi-currency support for global businesses")
+        ]
+
+        y_start = 4
+        for i, (seg_title, seg_desc) in enumerate(segments):
+            y = y_start + i * 0.7
+
+            # Segment box
+            seg_box = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(0.5), Inches(y),
+                Inches(12.333), Inches(0.6)
+            )
+            seg_box.fill.solid()
+            seg_box.fill.fore_color.rgb = BG_LIGHT
+            seg_box.line.color.rgb = PRIMARY_BLUE
+            seg_box.line.width = Pt(2)
+
+            # Title
+            seg_title_box = slide.shapes.add_textbox(
+                Inches(0.7), Inches(y + 0.05),
+                Inches(3), Inches(0.3)
+            )
+            seg_title_box.text_frame.text = seg_title
+            seg_title_box.text_frame.paragraphs[0].font.size = Pt(16)
+            seg_title_box.text_frame.paragraphs[0].font.bold = True
+            seg_title_box.text_frame.paragraphs[0].font.color.rgb = PRIMARY_BLUE
+
+            # Description
+            seg_desc_box = slide.shapes.add_textbox(
+                Inches(3.8), Inches(y + 0.1),
+                Inches(8.5), Inches(0.4)
+            )
+            seg_desc_box.text_frame.text = seg_desc
+            seg_desc_box.text_frame.word_wrap = True
+            seg_desc_box.text_frame.paragraphs[0].font.size = Pt(14)
+            seg_desc_box.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+    def add_business_model():
+        """Slide 11: Revenue Model & Business Case"""
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        # Title
+        title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.3), Inches(12.333), Inches(0.8))
+        title_frame = title_box.text_frame
+        title_frame.text = "💰 Revenue Model & Business Case"
+        title_para = title_frame.paragraphs[0]
+        title_para.font.size = Pt(44)
+        title_para.font.bold = True
+        title_para.font.color.rgb = PRIMARY_BLUE
+
+        # Revenue streams
+        revenue_title = slide.shapes.add_textbox(
+            Inches(0.5), Inches(1.2),
+            Inches(5.5), Inches(0.4)
+        )
+        revenue_title.text_frame.text = "Revenue Streams"
+        revenue_title.text_frame.paragraphs[0].font.size = Pt(22)
+        revenue_title.text_frame.paragraphs[0].font.bold = True
+        revenue_title.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+        streams = [
+            ("Transaction Fees", "R2-R5 per transaction", "60%"),
+            ("Monthly Subscriptions", "R99-R499 per user/month", "25%"),
+            ("Premium Features", "Goals, Crypto tracking, Analytics", "10%"),
+            ("Partner Commissions", "Buy Hub, Investment products", "5%")
+        ]
+
+        y_start = 1.8
+        for i, (stream, desc, percentage) in enumerate(streams):
+            y = y_start + i * 0.8
+
+            # Stream box
+            stream_box = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(0.5), Inches(y),
+                Inches(5.5), Inches(0.7)
+            )
+            colors = [ACCENT_GREEN, PRIMARY_BLUE, ACCENT_ORANGE, DARK_BLUE]
+            stream_box.fill.solid()
+            stream_box.fill.fore_color.rgb = colors[i]
+            stream_box.line.fill.background()
+
+            # Percentage circle
+            perc_box = slide.shapes.add_textbox(
+                Inches(0.7), Inches(y + 0.15),
+                Inches(0.8), Inches(0.4)
+            )
+            perc_box.text_frame.text = percentage
+            perc_box.text_frame.paragraphs[0].font.size = Pt(20)
+            perc_box.text_frame.paragraphs[0].font.bold = True
+            perc_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+            perc_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+            # Stream name
+            name_box = slide.shapes.add_textbox(
+                Inches(1.6), Inches(y + 0.1),
+                Inches(2.5), Inches(0.3)
+            )
+            name_box.text_frame.text = stream
+            name_box.text_frame.paragraphs[0].font.size = Pt(16)
+            name_box.text_frame.paragraphs[0].font.bold = True
+            name_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+
+            # Description
+            desc_box = slide.shapes.add_textbox(
+                Inches(1.6), Inches(y + 0.4),
+                Inches(3.6), Inches(0.25)
+            )
+            desc_box.text_frame.text = desc
+            desc_box.text_frame.word_wrap = True
+            desc_box.text_frame.paragraphs[0].font.size = Pt(12)
+            desc_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+
+        # Financial projections
+        proj_title = slide.shapes.add_textbox(
+            Inches(6.5), Inches(1.2),
+            Inches(6), Inches(0.4)
+        )
+        proj_title.text_frame.text = "3-Year Financial Projections (ZAR)"
+        proj_title.text_frame.paragraphs[0].font.size = Pt(22)
+        proj_title.text_frame.paragraphs[0].font.bold = True
+        proj_title.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+        # Projection table
+        projections = [
+            ("Year 1", "10K users", "R 4.8M", "R 2.2M", "R 2.6M"),
+            ("Year 2", "50K users", "R 28.5M", "R 8.5M", "R 20M"),
+            ("Year 3", "150K users", "R 105M", "R 18.2M", "R 86.8M")
+        ]
+
+        # Headers
+        headers = ["Year", "Users", "Revenue", "Costs", "Profit"]
+        header_widths = [1.2, 1.2, 1.5, 1.3, 1.5]
+        x_start = 6.5
+        y_header = 1.8
+
+        for i, (header, width) in enumerate(zip(headers, header_widths)):
+            x = x_start + sum(header_widths[:i])
+            header_box = slide.shapes.add_textbox(
+                Inches(x), Inches(y_header),
+                Inches(width), Inches(0.4)
+            )
+            header_box.text_frame.text = header
+            header_box.text_frame.paragraphs[0].font.size = Pt(14)
+            header_box.text_frame.paragraphs[0].font.bold = True
+            header_box.text_frame.paragraphs[0].font.color.rgb = DARK_BLUE
+            header_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+        # Data rows
+        y_data = 2.3
+        for i, proj in enumerate(projections):
+            for j, (value, width) in enumerate(zip(proj, header_widths)):
+                x = x_start + sum(header_widths[:j])
+                y = y_data + i * 0.6
+
+                # Row background
+                if j == 0:
+                    row_bg = slide.shapes.add_shape(
+                        MSO_SHAPE.ROUNDED_RECTANGLE,
+                        Inches(x_start - 0.1), Inches(y - 0.05),
+                        Inches(sum(header_widths) + 0.2), Inches(0.5)
+                    )
+                    row_bg.fill.solid()
+                    row_bg.fill.fore_color.rgb = BG_LIGHT
+                    row_bg.line.fill.background()
+
+                cell_box = slide.shapes.add_textbox(
+                    Inches(x), Inches(y),
+                    Inches(width), Inches(0.4)
+                )
+                cell_box.text_frame.text = value
+                cell_box.text_frame.paragraphs[0].font.size = Pt(14)
+                cell_box.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+                cell_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+                if j == 0:
+                    cell_box.text_frame.paragraphs[0].font.bold = True
+                if j == 4:  # Profit column
+                    cell_box.text_frame.paragraphs[0].font.color.rgb = ACCENT_GREEN
+                    cell_box.text_frame.paragraphs[0].font.bold = True
+
+        # Key metrics
+        metrics_box = slide.shapes.add_textbox(
+            Inches(6.5), Inches(5.2),
+            Inches(6), Inches(1.5)
+        )
+        metrics_frame = metrics_box.text_frame
+        metrics_frame.text = "Key Metrics:\n• Break-even: Month 18\n• Customer Acquisition Cost: R250\n• Lifetime Value: R4,800\n• LTV/CAC Ratio: 19.2x\n• Gross Margin: 82%"
+        for para in metrics_frame.paragraphs:
+            para.font.size = Pt(15)
+            para.font.color.rgb = DARK_GRAY
+            para.space_after = Pt(6)
+
+    def add_funding_request():
+        """Slide 12: Funding Request"""
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        # Title
+        title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.3), Inches(12.333), Inches(0.8))
+        title_frame = title_box.text_frame
+        title_frame.text = "💎 Funding Request"
+        title_para = title_frame.paragraphs[0]
+        title_para.font.size = Pt(44)
+        title_para.font.bold = True
+        title_para.font.color.rgb = PRIMARY_BLUE
+
+        # Funding amount box (hero)
+        amount_box = slide.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE,
+            Inches(2), Inches(1.5),
+            Inches(9.333), Inches(1.3)
+        )
+        amount_box.fill.solid()
+        amount_box.fill.fore_color.rgb = ACCENT_GREEN
+        amount_box.line.fill.background()
+        amount_box.shadow.inherit = False
+
+        # Amount text
+        amount_text = slide.shapes.add_textbox(
+            Inches(2), Inches(1.65),
+            Inches(9.333), Inches(0.5)
+        )
+        amount_text.text_frame.text = "Seeking: R 15 Million"
+        amount_text.text_frame.paragraphs[0].font.size = Pt(48)
+        amount_text.text_frame.paragraphs[0].font.bold = True
+        amount_text.text_frame.paragraphs[0].font.color.rgb = WHITE
+        amount_text.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+        # Subtext
+        subtext = slide.shapes.add_textbox(
+            Inches(2), Inches(2.2),
+            Inches(9.333), Inches(0.4)
+        )
+        subtext.text_frame.text = "Series A Funding • 18-Month Runway"
+        subtext.text_frame.paragraphs[0].font.size = Pt(22)
+        subtext.text_frame.paragraphs[0].font.color.rgb = WHITE
+        subtext.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+        # Use of funds
+        use_title = slide.shapes.add_textbox(
+            Inches(0.5), Inches(3.1),
+            Inches(12.333), Inches(0.4)
+        )
+        use_title.text_frame.text = "Use of Funds"
+        use_title.text_frame.paragraphs[0].font.size = Pt(24)
+        use_title.text_frame.paragraphs[0].font.bold = True
+        use_title.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+        allocations = [
+            ("Product Development", "R 5.5M", "37%", "Engineering team, feature development, UX/UI", ACCENT_GREEN),
+            ("Cloud Infrastructure", "R 2.5M", "17%", "AWS costs, scaling, security, monitoring", PRIMARY_BLUE),
+            ("Marketing & Sales", "R 4M", "27%", "Customer acquisition, brand building, partnerships", ACCENT_ORANGE),
+            ("Operations & Legal", "R 1.5M", "10%", "Compliance, licenses, operations, support", DARK_BLUE),
+            ("Reserve Fund", "R 1.5M", "10%", "Contingency, opportunities, buffer", LIGHT_GRAY)
+        ]
+
+        y_start = 3.7
+        for i, (category, amount, perc, desc, color) in enumerate(allocations):
+            y = y_start + i * 0.62
+
+            # Bar background
+            bar_bg = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(0.5), Inches(y),
+                Inches(12.333), Inches(0.55)
+            )
+            bar_bg.fill.solid()
+            bar_bg.fill.fore_color.rgb = BG_LIGHT
+            bar_bg.line.fill.background()
+
+            # Progress bar
+            perc_width = 12.333 * (float(perc.strip('%')) / 100)
+            bar_fill = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(0.5), Inches(y),
+                Inches(perc_width), Inches(0.55)
+            )
+            bar_fill.fill.solid()
+            bar_fill.fill.fore_color.rgb = color
+            bar_fill.line.fill.background()
+
+            # Category text
+            cat_text = slide.shapes.add_textbox(
+                Inches(0.7), Inches(y + 0.08),
+                Inches(3), Inches(0.4)
+            )
+            cat_text.text_frame.text = f"{category} - {amount}"
+            cat_text.text_frame.paragraphs[0].font.size = Pt(16)
+            cat_text.text_frame.paragraphs[0].font.bold = True
+            cat_text.text_frame.paragraphs[0].font.color.rgb = WHITE if float(perc.strip('%')) > 20 else DARK_GRAY
+
+            # Description
+            desc_text = slide.shapes.add_textbox(
+                Inches(4), Inches(y + 0.12),
+                Inches(5), Inches(0.3)
+            )
+            desc_text.text_frame.text = desc
+            desc_text.text_frame.word_wrap = True
+            desc_text.text_frame.paragraphs[0].font.size = Pt(13)
+            desc_text.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY if float(perc.strip('%')) < 20 else WHITE
+
+            # Percentage
+            perc_text = slide.shapes.add_textbox(
+                Inches(11.5), Inches(y + 0.08),
+                Inches(1), Inches(0.4)
+            )
+            perc_text.text_frame.text = perc
+            perc_text.text_frame.paragraphs[0].font.size = Pt(18)
+            perc_text.text_frame.paragraphs[0].font.bold = True
+            perc_text.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+            perc_text.text_frame.paragraphs[0].alignment = PP_ALIGN.RIGHT
+
+    def add_roi_projections():
+        """Slide 13: ROI & Exit Strategy"""
+        slide = prs.slides.add_slide(prs.slide_layouts[6])
+
+        # Title
+        title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.3), Inches(12.333), Inches(0.8))
+        title_frame = title_box.text_frame
+        title_frame.text = "📈 ROI Projections & Exit Strategy"
+        title_para = title_frame.paragraphs[0]
+        title_para.font.size = Pt(44)
+        title_para.font.bold = True
+        title_para.font.color.rgb = PRIMARY_BLUE
+
+        # ROI highlights
+        roi_boxes = [
+            ("Expected ROI", "5.8x", "In 3 Years", ACCENT_GREEN),
+            ("Valuation Target", "R 350M", "Year 3", PRIMARY_BLUE),
+            ("IRR", "142%", "Annual", ACCENT_ORANGE)
+        ]
+
+        box_width = 3.8
+        spacing = 0.4
+        start_x = 0.8
+
+        for i, (label, value, desc, color) in enumerate(roi_boxes):
+            x = start_x + i * (box_width + spacing)
+
+            # Box
+            box = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(x), Inches(1.4),
+                Inches(box_width), Inches(1.4)
+            )
+            box.fill.solid()
+            box.fill.fore_color.rgb = color
+            box.line.fill.background()
+            box.shadow.inherit = False
+
+            # Value
+            val_box = slide.shapes.add_textbox(
+                Inches(x), Inches(1.6),
+                Inches(box_width), Inches(0.6)
+            )
+            val_box.text_frame.text = value
+            val_box.text_frame.paragraphs[0].font.size = Pt(48)
+            val_box.text_frame.paragraphs[0].font.bold = True
+            val_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+            val_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+            # Label
+            lbl_box = slide.shapes.add_textbox(
+                Inches(x), Inches(2.2),
+                Inches(box_width), Inches(0.3)
+            )
+            lbl_box.text_frame.text = label
+            lbl_box.text_frame.paragraphs[0].font.size = Pt(16)
+            lbl_box.text_frame.paragraphs[0].font.bold = True
+            lbl_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+            lbl_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+            # Description
+            dsc_box = slide.shapes.add_textbox(
+                Inches(x), Inches(2.5),
+                Inches(box_width), Inches(0.25)
+            )
+            dsc_box.text_frame.text = desc
+            dsc_box.text_frame.paragraphs[0].font.size = Pt(14)
+            dsc_box.text_frame.paragraphs[0].font.color.rgb = WHITE
+            dsc_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+
+        # Exit strategies
+        exit_title = slide.shapes.add_textbox(
+            Inches(0.5), Inches(3.2),
+            Inches(12.333), Inches(0.4)
+        )
+        exit_title.text_frame.text = "Exit Strategy Options"
+        exit_title.text_frame.paragraphs[0].font.size = Pt(24)
+        exit_title.text_frame.paragraphs[0].font.bold = True
+        exit_title.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+        exits = [
+            ("🏦 Strategic Acquisition", "Major bank acquisition (FNB, Standard Bank, Capitec)", "Year 3-4", "Target: R 300-400M", ACCENT_GREEN),
+            ("🌍 International Expansion", "Expand to other African markets, raise Series B", "Year 2-3", "Target: R 150-200M", PRIMARY_BLUE),
+            ("📊 IPO", "Public listing on JSE or international exchange", "Year 4-5", "Target: R 500M+", ACCENT_ORANGE)
+        ]
+
+        y_start = 4
+        for i, (strategy, desc, timeline, target, color) in enumerate(exits):
+            y = y_start + i * 0.95
+
+            # Strategy box
+            strat_box = slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE,
+                Inches(0.5), Inches(y),
+                Inches(12.333), Inches(0.85)
+            )
+            strat_box.fill.solid()
+            strat_box.fill.fore_color.rgb = BG_LIGHT
+            strat_box.line.color.rgb = color
+            strat_box.line.width = Pt(3)
+
+            # Icon & Title
+            title_box = slide.shapes.add_textbox(
+                Inches(0.7), Inches(y + 0.08),
+                Inches(4), Inches(0.35)
+            )
+            title_box.text_frame.text = strategy
+            title_box.text_frame.paragraphs[0].font.size = Pt(20)
+            title_box.text_frame.paragraphs[0].font.bold = True
+            title_box.text_frame.paragraphs[0].font.color.rgb = color
+
+            # Description
+            desc_box = slide.shapes.add_textbox(
+                Inches(0.7), Inches(y + 0.45),
+                Inches(6.5), Inches(0.3)
+            )
+            desc_box.text_frame.text = desc
+            desc_box.text_frame.word_wrap = True
+            desc_box.text_frame.paragraphs[0].font.size = Pt(14)
+            desc_box.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+            # Timeline
+            time_box = slide.shapes.add_textbox(
+                Inches(7.5), Inches(y + 0.15),
+                Inches(2), Inches(0.3)
+            )
+            time_box.text_frame.text = f"⏱ {timeline}"
+            time_box.text_frame.paragraphs[0].font.size = Pt(15)
+            time_box.text_frame.paragraphs[0].font.bold = True
+            time_box.text_frame.paragraphs[0].font.color.rgb = DARK_GRAY
+
+            # Target
+            tgt_box = slide.shapes.add_textbox(
+                Inches(9.8), Inches(y + 0.15),
+                Inches(2.7), Inches(0.3)
+            )
+            tgt_box.text_frame.text = target
+            tgt_box.text_frame.paragraphs[0].font.size = Pt(16)
+            tgt_box.text_frame.paragraphs[0].font.bold = True
+            tgt_box.text_frame.paragraphs[0].font.color.rgb = ACCENT_GREEN
+            tgt_box.text_frame.paragraphs[0].alignment = PP_ALIGN.RIGHT
+
     # Create all slides
     print("Creating executive presentation slides...")
     add_title_slide()
     print("  ✓ Title slide")
     add_executive_summary()
     print("  ✓ Executive summary")
+    add_market_opportunity()
+    print("  ✓ Market opportunity")
+    add_business_model()
+    print("  ✓ Business model & revenue")
+    add_funding_request()
+    print("  ✓ Funding request")
+    add_roi_projections()
+    print("  ✓ ROI & exit strategy")
     add_tech_stack_infographic()
     print("  ✓ Tech stack infographic")
     add_security_architecture()
@@ -820,7 +1374,7 @@ def create_exec_presentation(output_file):
     # Save presentation
     prs.save(output_file)
     print(f"\n✅ Executive presentation created: {output_file}")
-    print(f"📊 Total slides: 9")
+    print(f"📊 Total slides: 13")
 
 if __name__ == '__main__':
     output_file = 'docs/BankApp_Executive_Presentation.pptx'
