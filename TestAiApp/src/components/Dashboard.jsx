@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Dashboard.css';
 
 function Dashboard({ userEmail, onLogout, onNavigate }) {
   const [selectedAccount, setSelectedAccount] = useState('checking');
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const accounts = {
     checking: { balance: 12345.67, account: '****4521' },
@@ -24,6 +26,28 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
     { icon: '💳', label: 'Cards', action: 'cards' },
     { icon: '📊', label: 'Analytics', action: 'analytics' }
   ];
+
+  // Fetch ZAR to USD exchange rate
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/ZAR');
+        const data = await response.json();
+        setExchangeRate(data.rates.USD);
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        setExchangeRate(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExchangeRate();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchExchangeRate, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="dashboard">
@@ -206,6 +230,35 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
               <div className="category-bar">
                 <div className="category-progress" style={{ width: '28%' }}></div>
               </div>
+            </div>
+          </div>
+
+          <div className="insights-card">
+            <h3 className="insights-title">Exchange Rate</h3>
+            <div className="exchange-rate-display">
+              <div className="exchange-rate-header">
+                <span className="currency-flag">🇿🇦</span>
+                <span className="currency-pair">ZAR / USD</span>
+                <span className="currency-flag">🇺🇸</span>
+              </div>
+              {loading ? (
+                <div className="exchange-rate-loading">Loading...</div>
+              ) : exchangeRate ? (
+                <>
+                  <div className="exchange-rate-value">
+                    R 1.00 = ${exchangeRate.toFixed(4)}
+                  </div>
+                  <div className="exchange-rate-inverse">
+                    $1.00 = R {(1 / exchangeRate).toFixed(2)}
+                  </div>
+                  <div className="exchange-rate-footer">
+                    <span className="exchange-rate-label">Live Rate</span>
+                    <span className="exchange-rate-update">Updated every 5 min</span>
+                  </div>
+                </>
+              ) : (
+                <div className="exchange-rate-error">Unable to fetch rate</div>
+              )}
             </div>
           </div>
         </aside>
