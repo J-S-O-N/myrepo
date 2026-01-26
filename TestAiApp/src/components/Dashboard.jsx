@@ -27,14 +27,14 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
     { icon: '📊', label: 'Analytics', action: 'analytics' }
   ];
 
-  // Fetch ZAR to USD exchange rate
+  // Fetch USD to ZAR exchange rate
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://api.exchangerate-api.com/v4/latest/ZAR');
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const data = await response.json();
-        setExchangeRate(data.rates.USD);
+        setExchangeRate(data.rates.ZAR);
       } catch (error) {
         console.error('Error fetching exchange rate:', error);
         setExchangeRate(null);
@@ -237,19 +237,19 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
             <h3 className="insights-title">Exchange Rate</h3>
             <div className="exchange-rate-display">
               <div className="exchange-rate-header">
-                <span className="currency-flag">🇿🇦</span>
-                <span className="currency-pair">ZAR / USD</span>
                 <span className="currency-flag">🇺🇸</span>
+                <span className="currency-pair">USD / ZAR</span>
+                <span className="currency-flag">🇿🇦</span>
               </div>
               {loading ? (
                 <div className="exchange-rate-loading">Loading...</div>
               ) : exchangeRate ? (
                 <>
                   <div className="exchange-rate-value">
-                    R 1.00 = ${exchangeRate.toFixed(4)}
+                    $1.00 = R {exchangeRate.toFixed(2)}
                   </div>
                   <div className="exchange-rate-inverse">
-                    $1.00 = R {(1 / exchangeRate).toFixed(2)}
+                    R 1.00 = ${(1 / exchangeRate).toFixed(4)}
                   </div>
                   <div className="exchange-rate-footer">
                     <span className="exchange-rate-label">Live Rate</span>

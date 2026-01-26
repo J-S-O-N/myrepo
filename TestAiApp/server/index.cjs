@@ -4,6 +4,7 @@ const { syncDatabase } = require('./models/index.cjs');
 const authRoutes = require('./routes/auth.cjs');
 const settingsRoutes = require('./routes/settings.cjs');
 const goalsRoutes = require('./routes/goals.cjs');
+const stocksRoutes = require('./routes/stocks.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/goals', goalsRoutes);
+app.use('/api/stocks', stocksRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
