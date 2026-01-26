@@ -5,6 +5,8 @@ const authRoutes = require('./routes/auth.cjs');
 const settingsRoutes = require('./routes/settings.cjs');
 const goalsRoutes = require('./routes/goals.cjs');
 const stocksRoutes = require('./routes/stocks.cjs');
+const stravaRoutes = require('./routes/strava.cjs');
+const configRoutes = require('./routes/config.cjs');
 require('dotenv').config();
 
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/goals', goalsRoutes);
 app.use('/api/stocks', stocksRoutes);
+app.use('/api/strava', stravaRoutes);
+app.use('/api/config', configRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

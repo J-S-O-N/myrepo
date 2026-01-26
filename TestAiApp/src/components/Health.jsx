@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Health.css';
 
 function Health({ userEmail, onLogout, onNavigate }) {
   const [selectedPeriod, setSelectedPeriod] = useState('week');
+  const [stravaConnected, setStravaConnected] = useState(false);
+  const [stravaLoading, setStravaLoading] = useState(true);
+  const [stravaActivities, setStravaActivities] = useState([]);
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [connectError, setConnectError] = useState(null);
 
   const healthStats = {
     steps: { value: 8547, goal: 10000, unit: 'steps' },
@@ -37,6 +42,142 @@ function Health({ userEmail, onLogout, onNavigate }) {
 
   const calculatePercentage = (value, goal) => {
     return Math.min((value / goal) * 100, 100);
+  };
+
+  // Check Strava connection status on mount
+  useEffect(() => {
+    checkStravaStatus();
+
+    // Check for OAuth callback parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('strava_connected') === 'true') {
+      setStravaConnected(true);
+      checkStravaStatus();
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (urlParams.get('strava_error')) {
+      setConnectError(urlParams.get('strava_error'));
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  // Fetch activities when connected
+  useEffect(() => {
+    if (stravaConnected) {
+      fetchStravaActivities();
+    }
+  }, [stravaConnected]);
+
+  const checkStravaStatus = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/strava/status', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStravaConnected(data.connected);
+      }
+    } catch (error) {
+      console.error('Error checking Strava status:', error);
+    } finally {
+      setStravaLoading(false);
+    }
+  };
+
+  const handleConnectStrava = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/strava/auth', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Redirect to Strava authorization
+        window.location.href = data.authUrl;
+      } else {
+        setConnectError('Failed to initiate Strava connection');
+      }
+    } catch (error) {
+      console.error('Error connecting to Strava:', error);
+      setConnectError('Failed to connect to Strava');
+    }
+  };
+
+  const handleDisconnectStrava = async () => {
+    if (!confirm('Are you sure you want to disconnect Strava?')) {
+      return;
+    }
+
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/strava/disconnect', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        setStravaConnected(false);
+        setStravaActivities([]);
+      }
+    } catch (error) {
+      console.error('Error disconnecting Strava:', error);
+    }
+  };
+
+  const fetchStravaActivities = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await fetch('http://localhost:3001/api/strava/activities', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStravaActivities(data.activities || []);
+      }
+    } catch (error) {
+      console.error('Error fetching Strava activities:', error);
+    }
+  };
+
+  const formatActivityType = (type) => {
+    const icons = {
+      'Run': '🏃',
+      'Ride': '🚴',
+      'Swim': '🏊',
+      'Walk': '🚶',
+      'Hike': '🥾',
+      'Yoga': '🧘',
+      'WeightTraining': '🏋️',
+      'Workout': '💪'
+    };
+    return icons[type] || '🏃';
+  };
+
+  const formatDistance = (meters) => {
+    const km = meters / 1000;
+    return `${km.toFixed(2)} km`;
+  };
+
+  const formatDuration = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} min`;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   return (
@@ -231,25 +372,100 @@ function Health({ userEmail, onLogout, onNavigate }) {
             </div>
           </section>
 
+          {/* Strava Integration Section */}
+          <section className="strava-section">
+            <div className="strava-header">
+              <h2 className="section-title">Strava Integration</h2>
+              {!stravaLoading && (
+                <div className="strava-controls">
+                  {stravaConnected ? (
+                    <button className="strava-disconnect-btn" onClick={handleDisconnectStrava}>
+                      Disconnect Strava
+                    </button>
+                  ) : (
+                    <>
+                      <button className="strava-guide-btn" onClick={() => setShowGuideModal(true)}>
+                        ℹ️ How it works
+                      </button>
+                      <button className="strava-connect-btn" onClick={handleConnectStrava}>
+                        🔗 Connect to Strava
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {stravaLoading && (
+              <div className="strava-loading">Loading Strava status...</div>
+            )}
+
+            {!stravaLoading && stravaConnected && (
+              <div className="strava-status-connected">
+                ✅ Connected to Strava - Your activities will sync automatically
+              </div>
+            )}
+
+            {!stravaLoading && !stravaConnected && (
+              <div className="strava-status-disconnected">
+                Connect your Strava account to sync your runs, rides, and workouts automatically
+              </div>
+            )}
+
+            {connectError && (
+              <div className="strava-error">
+                ⚠️ {connectError}
+              </div>
+            )}
+          </section>
+
           {/* Workout History */}
           <section className="workout-history">
-            <h2 className="section-title">Recent Workouts</h2>
+            <h2 className="section-title">
+              {stravaConnected ? 'Recent Strava Activities' : 'Recent Workouts'}
+            </h2>
             <div className="workout-list">
-              {workoutHistory.map((workout) => (
-                <div key={workout.id} className="workout-item">
-                  <div className="workout-icon">{workout.icon}</div>
-                  <div className="workout-info">
-                    <div className="workout-name">{workout.type}</div>
-                    <div className="workout-meta">
-                      <span>{workout.duration} min</span>
-                      <span>•</span>
-                      <span>{workout.calories} cal</span>
-                      <span>•</span>
-                      <span>{workout.date}</span>
+              {stravaConnected && stravaActivities.length > 0 ? (
+                stravaActivities.map((activity) => (
+                  <div key={activity.id} className="workout-item">
+                    <div className="workout-icon">{formatActivityType(activity.type)}</div>
+                    <div className="workout-info">
+                      <div className="workout-name">{activity.name}</div>
+                      <div className="workout-meta">
+                        <span>{formatDistance(activity.distance)}</span>
+                        <span>•</span>
+                        <span>{formatDuration(activity.moving_time)}</span>
+                        {activity.total_elevation_gain > 0 && (
+                          <>
+                            <span>•</span>
+                            <span>↗ {Math.round(activity.total_elevation_gain)}m</span>
+                          </>
+                        )}
+                        <span>•</span>
+                        <span>{formatDate(activity.start_date)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : stravaConnected ? (
+                <div className="no-activities">No recent activities found</div>
+              ) : (
+                workoutHistory.map((workout) => (
+                  <div key={workout.id} className="workout-item">
+                    <div className="workout-icon">{workout.icon}</div>
+                    <div className="workout-info">
+                      <div className="workout-name">{workout.type}</div>
+                      <div className="workout-meta">
+                        <span>{workout.duration} min</span>
+                        <span>•</span>
+                        <span>{workout.calories} cal</span>
+                        <span>•</span>
+                        <span>{workout.date}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </section>
         </main>
@@ -295,6 +511,79 @@ function Health({ userEmail, onLogout, onNavigate }) {
           </div>
         </aside>
       </div>
+
+      {/* Strava Connection Guide Modal */}
+      {showGuideModal && (
+        <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>🏃 Connect to Strava</h2>
+              <button className="modal-close" onClick={() => setShowGuideModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="guide-section">
+                <h3>What is Strava?</h3>
+                <p>Strava is a popular fitness tracking app used by millions of athletes worldwide to record and share their runs, rides, and other activities.</p>
+              </div>
+
+              <div className="guide-section">
+                <h3>Why Connect?</h3>
+                <ul>
+                  <li>📊 Automatically sync your runs, rides, and workouts</li>
+                  <li>📈 See your real activity data in BankApp</li>
+                  <li>🏆 Track your progress over time</li>
+                  <li>💪 No manual data entry required</li>
+                </ul>
+              </div>
+
+              <div className="guide-section">
+                <h3>What We'll Access</h3>
+                <p>When you connect, BankApp will request permission to:</p>
+                <ul>
+                  <li>View your activity data (runs, rides, etc.)</li>
+                  <li>Read your profile information</li>
+                </ul>
+                <p className="guide-note">⚠️ We will NOT post activities or modify your Strava account.</p>
+              </div>
+
+              <div className="guide-section">
+                <h3>How to Connect</h3>
+                <ol>
+                  <li>Click "Connect to Strava" button</li>
+                  <li>You'll be redirected to Strava's website</li>
+                  <li>Log in to your Strava account (if not already logged in)</li>
+                  <li>Click "Authorize" to grant BankApp access</li>
+                  <li>You'll be redirected back to BankApp</li>
+                  <li>Your activities will sync automatically</li>
+                </ol>
+              </div>
+
+              <div className="guide-section">
+                <h3>Privacy & Security</h3>
+                <p>Your Strava credentials are never stored in BankApp. We only receive a secure access token from Strava that allows us to read your activity data. You can disconnect at any time.</p>
+              </div>
+
+              <div className="guide-section troubleshooting">
+                <h3>Troubleshooting</h3>
+                <p><strong>Connection failed?</strong></p>
+                <ul>
+                  <li>Make sure you have a Strava account</li>
+                  <li>Check that you clicked "Authorize" on Strava's page</li>
+                  <li>Try clearing your browser cache and reconnecting</li>
+                </ul>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="modal-cancel-btn" onClick={() => setShowGuideModal(false)}>
+                Close
+              </button>
+              <button className="modal-connect-btn" onClick={() => { setShowGuideModal(false); handleConnectStrava(); }}>
+                Connect to Strava
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

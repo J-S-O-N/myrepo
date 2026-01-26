@@ -89,6 +89,27 @@ const UserSettings = sequelize.define('UserSettings', {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  // Strava Integration
+  strava_access_token: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  strava_refresh_token: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  strava_token_expires_at: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+  },
+  strava_athlete_id: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+  },
+  strava_connected: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   tableName: 'user_settings',
   timestamps: true,

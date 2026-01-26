@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css';
+import './Settings.css';
 
 function Settings({ userEmail, token, onLogout, onNavigate }) {
   const [settings, setSettings] = useState(null);
@@ -7,6 +8,20 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Strava configuration state
+  const [stravaConfig, setStravaConfig] = useState({
+    configured: false,
+    clientId: '',
+    redirectUri: '',
+  });
+  const [stravaFormData, setStravaFormData] = useState({
+    clientId: '',
+    clientSecret: '',
+  });
+  const [stravaSaving, setStravaSaving] = useState(false);
+  const [stravaError, setStravaError] = useState('');
+  const [stravaSuccess, setStravaSuccess] = useState('');
 
   const [formData, setFormData] = useState({
     street_address: '',
@@ -30,6 +45,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
   useEffect(() => {
     fetchSettings();
+    fetchStravaConfig();
   }, []);
 
   const fetchSettings = async () => {
@@ -88,6 +104,70 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       whatsapp_notifications: settingsData.whatsapp_notifications === true,
       in_app_notifications: settingsData.in_app_notifications !== false,
     });
+  };
+
+  const fetchStravaConfig = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/config/strava', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStravaConfig(data);
+      }
+    } catch (err) {
+      console.error('Error fetching Strava config:', err);
+    }
+  };
+
+  const handleStravaInputChange = (e) => {
+    const { name, value } = e.target;
+    setStravaFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    setStravaSuccess('');
+    setStravaError('');
+  };
+
+  const handleStravaSave = async () => {
+    try {
+      setStravaSaving(true);
+      setStravaError('');
+      setStravaSuccess('');
+
+      if (!stravaFormData.clientId || !stravaFormData.clientSecret) {
+        setStravaError('Both Client ID and Client Secret are required');
+        setStravaSaving(false);
+        return;
+      }
+
+      const response = await fetch('http://localhost:3001/api/config/strava', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(stravaFormData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save Strava configuration');
+      }
+
+      const data = await response.json();
+      setStravaSuccess(data.message);
+      setStravaFormData({ clientId: '', clientSecret: '' }); // Clear form
+      fetchStravaConfig(); // Refresh config status
+    } catch (err) {
+      setStravaError(err.message);
+    } finally {
+      setStravaSaving(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -512,6 +592,88 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
+              </div>
+            </div>
+
+            {/* API Integrations */}
+            <div className="settings-card">
+              <h3 className="card-title">🏃 Strava Integration</h3>
+              <p className="card-description">
+                Configure Strava API credentials to enable fitness tracking integration.
+                <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '8px', color: '#fc4c02' }}>
+                  Get API Credentials →
+                </a>
+              </p>
+
+              {stravaError && (
+                <div className="alert-banner error" style={{ marginBottom: '1rem' }}>
+                  <span>⚠️</span> {stravaError}
+                </div>
+              )}
+              {stravaSuccess && (
+                <div className="alert-banner success" style={{ marginBottom: '1rem' }}>
+                  <span>✅</span> {stravaSuccess}
+                </div>
+              )}
+
+              {stravaConfig.configured && (
+                <div className="strava-status-badge">
+                  ✅ Strava is configured (Client ID: {stravaConfig.clientId})
+                </div>
+              )}
+
+              <div className="settings-form-grid">
+                <div className="form-field">
+                  <label>Client ID</label>
+                  <input
+                    type="text"
+                    name="clientId"
+                    value={stravaFormData.clientId}
+                    onChange={handleStravaInputChange}
+                    placeholder="Enter your Strava Client ID (numeric)"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Find this in your Strava API application settings</small>
+                </div>
+                <div className="form-field">
+                  <label>Client Secret</label>
+                  <input
+                    type="password"
+                    name="clientSecret"
+                    value={stravaFormData.clientSecret}
+                    onChange={handleStravaInputChange}
+                    placeholder="Enter your Strava Client Secret"
+                    className="input-field"
+                  />
+                  <small className="field-hint">Keep this secret and never share it publicly</small>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1rem' }}>
+                <button
+                  className="btn-save"
+                  onClick={handleStravaSave}
+                  disabled={stravaSaving}
+                  style={{ marginRight: '0.5rem' }}
+                >
+                  {stravaSaving ? 'Saving...' : 'Save Strava Config'}
+                </button>
+                <small className="field-hint">
+                  Redirect URI: {stravaConfig.redirectUri || 'http://localhost:3001/api/strava/callback'}
+                </small>
+              </div>
+
+              <div className="strava-setup-info">
+                <p><strong>Setup Steps:</strong></p>
+                <ol style={{ marginLeft: '1.5rem', lineHeight: '1.8' }}>
+                  <li>Go to <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener noreferrer">Strava API Settings</a></li>
+                  <li>Create a new application or use an existing one</li>
+                  <li>Set Authorization Callback Domain to: <code>localhost</code></li>
+                  <li>Set Authorization Callback URL to: <code>{stravaConfig.redirectUri || 'http://localhost:3001/api/strava/callback'}</code></li>
+                  <li>Copy your Client ID and Client Secret</li>
+                  <li>Paste them in the fields above and click "Save Strava Config"</li>
+                  <li>Go to Health & Fitness page to connect your account</li>
+                </ol>
               </div>
             </div>
 

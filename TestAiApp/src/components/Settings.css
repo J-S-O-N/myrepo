@@ -6,6 +6,68 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+/* Strava Configuration Styles */
+.card-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.strava-status-badge {
+  background: #d1fae5;
+  border-left: 4px solid #10b981;
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: #065f46;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.strava-setup-info {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.strava-setup-info p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #374151;
+}
+
+.strava-setup-info ol {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+  color: #374151;
+}
+
+.strava-setup-info li {
+  margin-bottom: 0.5rem;
+}
+
+.strava-setup-info code {
+  background: #e5e7eb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.8125rem;
+  color: #1f2937;
+}
+
+.strava-setup-info a {
+  color: #fc4c02;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.strava-setup-info a:hover {
+  text-decoration: underline;
+}
+
 .settings-loading {
   color: white;
   font-size: 1.5rem;

@@ -364,6 +364,270 @@
   line-height: 1.4;
 }
 
+/* Strava Integration */
+.strava-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.strava-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.strava-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.strava-connect-btn {
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, #fc4c02 0%, #e34402 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(252, 76, 2, 0.2);
+}
+
+.strava-connect-btn:hover {
+  background: linear-gradient(135deg, #e34402 0%, #d43e02 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(252, 76, 2, 0.3);
+}
+
+.strava-disconnect-btn {
+  padding: 0.625rem 1.25rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.strava-disconnect-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.strava-guide-btn {
+  padding: 0.625rem 1.25rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.strava-guide-btn:hover {
+  background: #e5e7eb;
+}
+
+.strava-loading {
+  text-align: center;
+  padding: 1rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.strava-status-connected {
+  padding: 1rem;
+  background: #d1fae5;
+  border-left: 4px solid #10b981;
+  border-radius: 8px;
+  color: #065f46;
+  font-weight: 500;
+}
+
+.strava-status-disconnected {
+  padding: 1rem;
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  color: #92400e;
+}
+
+.strava-error {
+  padding: 1rem;
+  background: #fee2e2;
+  border-left: 4px solid #ef4444;
+  border-radius: 8px;
+  color: #991b1b;
+  margin-top: 1rem;
+}
+
+.no-activities {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #111827;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.guide-section {
+  margin-bottom: 1.5rem;
+}
+
+.guide-section:last-child {
+  margin-bottom: 0;
+}
+
+.guide-section h3 {
+  font-size: 1.125rem;
+  color: #111827;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+}
+
+.guide-section p {
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 0.5rem 0;
+}
+
+.guide-section ul,
+.guide-section ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.guide-section li {
+  margin-bottom: 0.5rem;
+}
+
+.guide-note {
+  background: #fef3c7;
+  padding: 0.75rem;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+}
+
+.guide-section.troubleshooting {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-cancel-btn {
+  padding: 0.625rem 1.25rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.modal-connect-btn {
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, #fc4c02 0%, #e34402 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(252, 76, 2, 0.2);
+}
+
+.modal-connect-btn:hover {
+  background: linear-gradient(135deg, #e34402 0%, #d43e02 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(252, 76, 2, 0.3);
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .health-header {
