@@ -259,7 +259,58 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
   if (loading) {
     return (
       <div className="dashboard">
-        <div className="loading-message">Loading settings...</div>
+        <header className="dashboard-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <h1 className="logo">💳 BankApp</h1>
+            </div>
+            <div className="user-section">
+              <span className="user-email">{userEmail}</span>
+              <button className="logout-btn" onClick={onLogout}>Logout</button>
+            </div>
+          </div>
+        </header>
+        <div className="dashboard-content">
+          <aside className="sidebar">
+            <nav className="nav-menu">
+              <button className="nav-item" onClick={() => onNavigate('dashboard')}>
+                <span className="nav-icon">🏠</span>
+                <span>Dashboard</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('accounts')}>
+                <span className="nav-icon">💰</span>
+                <span>Accounts</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('investments')}>
+                <span className="nav-icon">📈</span>
+                <span>Investments</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('health')}>
+                <span className="nav-icon">❤️</span>
+                <span>Health & Fitness</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('goals')}>
+                <span className="nav-icon">🎯</span>
+                <span>Goals</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('buyhub')}>
+                <span className="nav-icon">🛒</span>
+                <span>Buy Hub</span>
+              </button>
+              <button className="nav-item" onClick={() => onNavigate('crypto')}>
+                <span className="nav-icon">₿</span>
+                <span>Crypto</span>
+              </button>
+              <button className="nav-item active">
+                <span className="nav-icon">⚙️</span>
+                <span>Settings</span>
+              </button>
+            </nav>
+          </aside>
+          <main className="main-panel">
+            <div className="settings-loading">Loading settings...</div>
+          </main>
+        </div>
       </div>
     );
   }
@@ -322,8 +373,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         {/* Main Panel */}
         <main className="main-panel">
           <div className="panel-header">
-            <h2 className="panel-title">Account Settings</h2>
-            <p className="panel-subtitle">Manage your personal information and preferences</p>
+            <h1 className="panel-title">⚙️ Settings</h1>
           </div>
 
           {error && (
@@ -696,6 +746,88 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
             </div>
           </div>
         </main>
+
+        {/* Right Sidebar - Insights */}
+        <aside className="insights-panel">
+          <div className="insights-card">
+            <h3 className="insights-title">📋 Account Summary</h3>
+            <div className="insight-item">
+              <span className="insight-label">Account Status</span>
+              <span className="insight-value positive">Active</span>
+            </div>
+            <div className="insight-item">
+              <span className="insight-label">Profile Completion</span>
+              <span className="insight-value">{settings && (settings.street_address && settings.city) ? '100%' : '50%'}</span>
+            </div>
+            <div className="insight-item">
+              <span className="insight-label">Last Updated</span>
+              <span className="insight-value">Today</span>
+            </div>
+          </div>
+
+          <div className="insights-card">
+            <h3 className="insights-title">🔒 Security Status</h3>
+            <div className="category-item">
+              <div className="category-info">
+                <span className="category-name">Card Controls</span>
+                <span className="category-amount">{formData.card_enabled ? 'Enabled' : 'Disabled'}</span>
+              </div>
+              <div className="category-bar">
+                <div className="category-progress" style={{ width: formData.card_enabled ? '100%' : '0%' }}></div>
+              </div>
+            </div>
+            <div className="category-item">
+              <div className="category-info">
+                <span className="category-name">Online Payments</span>
+                <span className="category-amount">{formData.online_payments_enabled ? 'Enabled' : 'Disabled'}</span>
+              </div>
+              <div className="category-bar">
+                <div className="category-progress" style={{ width: formData.online_payments_enabled ? '100%' : '0%' }}></div>
+              </div>
+            </div>
+            <div className="category-item">
+              <div className="category-info">
+                <span className="category-name">International</span>
+                <span className="category-amount">{formData.international_transactions_enabled ? 'Enabled' : 'Disabled'}</span>
+              </div>
+              <div className="category-bar">
+                <div className="category-progress" style={{ width: formData.international_transactions_enabled ? '100%' : '0%' }}></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="insights-card">
+            <h3 className="insights-title">💰 Transaction Limits</h3>
+            <div className="insight-item">
+              <span className="insight-label">Daily Limit</span>
+              <span className="insight-value">R {formData.daily_limit.toLocaleString('en-ZA')}</span>
+            </div>
+            <div className="insight-item">
+              <span className="insight-label">Monthly Limit</span>
+              <span className="insight-value">R {formData.monthly_limit.toLocaleString('en-ZA')}</span>
+            </div>
+            <div className="insight-item">
+              <span className="insight-label">ATM Limit</span>
+              <span className="insight-value">R {formData.atm_limit.toLocaleString('en-ZA')}</span>
+            </div>
+          </div>
+
+          <div className="insights-card">
+            <h3 className="insights-title">📱 Quick Tips</h3>
+            <div className="settings-tip">
+              <div className="tip-icon">💡</div>
+              <div className="tip-text">Enable notifications to stay updated on your account activity</div>
+            </div>
+            <div className="settings-tip">
+              <div className="tip-icon">🔒</div>
+              <div className="tip-text">Review your transaction limits regularly for security</div>
+            </div>
+            <div className="settings-tip">
+              <div className="tip-icon">🌍</div>
+              <div className="tip-text">Enable international transactions only when traveling</div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

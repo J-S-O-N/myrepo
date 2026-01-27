@@ -1,10 +1,4 @@
-.settings-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+/* Settings page uses Dashboard.css layout - no container override needed */
 
 /* Strava Configuration Styles */
 .card-description {
@@ -69,9 +63,35 @@
 }
 
 .settings-loading {
-  color: white;
-  font-size: 1.5rem;
+  text-align: center;
+  padding: 3rem 0;
+  color: #6b7280;
+  font-size: 1.125rem;
   font-weight: 500;
+}
+
+/* Settings Tips */
+.settings-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-tip:last-child {
+  border-bottom: none;
+}
+
+.tip-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.4;
 }
 
 .settings-content {
