@@ -5,9 +5,26 @@ import './Settings.css';
 function Settings({ userEmail, token, onLogout, onNavigate }) {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+
+  // Section-specific state for Address
+  const [addressSaving, setAddressSaving] = useState(false);
+  const [addressError, setAddressError] = useState('');
+  const [addressSuccess, setAddressSuccess] = useState('');
+
+  // Section-specific state for Transaction Limits
+  const [limitsSaving, setLimitsSaving] = useState(false);
+  const [limitsError, setLimitsError] = useState('');
+  const [limitsSuccess, setLimitsSuccess] = useState('');
+
+  // Section-specific state for Card Preferences
+  const [cardSaving, setCardSaving] = useState(false);
+  const [cardError, setCardError] = useState('');
+  const [cardSuccess, setCardSuccess] = useState('');
+
+  // Section-specific state for Communication Preferences
+  const [commSaving, setCommSaving] = useState(false);
+  const [commError, setCommError] = useState('');
+  const [commSuccess, setCommSuccess] = useState('');
 
   // Strava configuration state
   const [stravaConfig, setStravaConfig] = useState({
@@ -51,7 +68,6 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      setError('');
 
       const response = await fetch('http://localhost:3001/api/settings', {
         headers: {
@@ -78,7 +94,9 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         throw new Error('Failed to fetch settings');
       }
     } catch (err) {
-      setError(err.message);
+      console.error('Error fetching settings:', err);
+      // Set a generic error on one of the sections
+      setAddressError('Failed to load settings. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -176,8 +194,15 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
-    setSuccess('');
-    setError('');
+    // Clear all success/error messages when user makes changes
+    setAddressSuccess('');
+    setAddressError('');
+    setLimitsSuccess('');
+    setLimitsError('');
+    setCardSuccess('');
+    setCardError('');
+    setCommSuccess('');
+    setCommError('');
   };
 
   const validateTransactionLimits = () => {
@@ -201,22 +226,60 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
     return null;
   };
 
-  const handleSave = async () => {
+  // Save Address Information
+  const handleSaveAddress = async () => {
     try {
-      setSaving(true);
-      setError('');
-      setSuccess('');
+      setAddressSaving(true);
+      setAddressError('');
+      setAddressSuccess('');
+
+      const updatedSettings = {
+        street_address: formData.street_address,
+        city: formData.city,
+        postal_code: formData.postal_code,
+        country: formData.country,
+      };
+
+      const response = await fetch('http://localhost:3001/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedSettings),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save address');
+      }
+
+      const data = await response.json();
+      setSettings(data.settings);
+      setAddressSuccess('Address saved successfully!');
+    } catch (err) {
+      setAddressError(err.message);
+    } finally {
+      setAddressSaving(false);
+    }
+  };
+
+  // Save Transaction Limits
+  const handleSaveLimits = async () => {
+    try {
+      setLimitsSaving(true);
+      setLimitsError('');
+      setLimitsSuccess('');
 
       // Validate transaction limits before submitting
       const validationError = validateTransactionLimits();
       if (validationError) {
-        setError(validationError);
-        setSaving(false);
+        setLimitsError(validationError);
+        setLimitsSaving(false);
         return;
       }
 
       const updatedSettings = {
-        ...formData,
         daily_limit: Math.round(parseFloat(formData.daily_limit) * 100),
         monthly_limit: Math.round(parseFloat(formData.monthly_limit) * 100),
         mobile_app_limit: Math.round(parseFloat(formData.mobile_app_limit) * 100),
@@ -235,24 +298,92 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save settings');
+        throw new Error(errorData.error || 'Failed to save transaction limits');
       }
 
       const data = await response.json();
       setSettings(data.settings);
-      setSuccess('Settings saved successfully!');
+      setLimitsSuccess('Transaction limits saved successfully!');
     } catch (err) {
-      setError(err.message);
+      setLimitsError(err.message);
     } finally {
-      setSaving(false);
+      setLimitsSaving(false);
     }
   };
 
-  const handleCancel = () => {
-    if (settings) {
-      populateFormData(settings);
-      setSuccess('');
-      setError('');
+  // Save Card Preferences
+  const handleSaveCard = async () => {
+    try {
+      setCardSaving(true);
+      setCardError('');
+      setCardSuccess('');
+
+      const updatedSettings = {
+        card_enabled: formData.card_enabled,
+        contactless_enabled: formData.contactless_enabled,
+        online_payments_enabled: formData.online_payments_enabled,
+        international_transactions_enabled: formData.international_transactions_enabled,
+      };
+
+      const response = await fetch('http://localhost:3001/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedSettings),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save card preferences');
+      }
+
+      const data = await response.json();
+      setSettings(data.settings);
+      setCardSuccess('Card preferences saved successfully!');
+    } catch (err) {
+      setCardError(err.message);
+    } finally {
+      setCardSaving(false);
+    }
+  };
+
+  // Save Communication Preferences
+  const handleSaveComm = async () => {
+    try {
+      setCommSaving(true);
+      setCommError('');
+      setCommSuccess('');
+
+      const updatedSettings = {
+        email_notifications: formData.email_notifications,
+        sms_notifications: formData.sms_notifications,
+        whatsapp_notifications: formData.whatsapp_notifications,
+        in_app_notifications: formData.in_app_notifications,
+      };
+
+      const response = await fetch('http://localhost:3001/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedSettings),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save communication preferences');
+      }
+
+      const data = await response.json();
+      setSettings(data.settings);
+      setCommSuccess('Communication preferences saved successfully!');
+    } catch (err) {
+      setCommError(err.message);
+    } finally {
+      setCommSaving(false);
     }
   };
 
@@ -376,21 +507,22 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
             <h1 className="panel-title">⚙️ Settings</h1>
           </div>
 
-          {error && (
-            <div className="alert-banner error">
-              <span>⚠️</span> {error}
-            </div>
-          )}
-          {success && (
-            <div className="alert-banner success">
-              <span>✅</span> {success}
-            </div>
-          )}
-
           <div className="settings-container">
             {/* Address Information */}
             <div className="settings-card">
               <h3 className="card-title">Address Information</h3>
+
+              {addressError && (
+                <div className="alert-banner error" style={{ marginBottom: '1rem' }}>
+                  <span>⚠️</span> {addressError}
+                </div>
+              )}
+              {addressSuccess && (
+                <div className="alert-banner success" style={{ marginBottom: '1rem' }}>
+                  <span>✅</span> {addressSuccess}
+                </div>
+              )}
+
               <div className="settings-form-grid">
                 <div className="form-field">
                   <label>Street Address</label>
@@ -437,11 +569,33 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   />
                 </div>
               </div>
+
+              <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className="btn-save"
+                  onClick={handleSaveAddress}
+                  disabled={addressSaving}
+                >
+                  {addressSaving ? 'Saving...' : 'Save Address'}
+                </button>
+              </div>
             </div>
 
             {/* Transaction Limits */}
             <div className="settings-card">
               <h3 className="card-title">Transaction Limits</h3>
+
+              {limitsError && (
+                <div className="alert-banner error" style={{ marginBottom: '1rem' }}>
+                  <span>⚠️</span> {limitsError}
+                </div>
+              )}
+              {limitsSuccess && (
+                <div className="alert-banner success" style={{ marginBottom: '1rem' }}>
+                  <span>✅</span> {limitsSuccess}
+                </div>
+              )}
+
               <div className="settings-form-grid">
                 <div className="form-field">
                   <label>Daily Limit (R)</label>
@@ -509,11 +663,33 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   <small className="field-hint">Maximum limit for ATM withdrawals</small>
                 </div>
               </div>
+
+              <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className="btn-save"
+                  onClick={handleSaveLimits}
+                  disabled={limitsSaving}
+                >
+                  {limitsSaving ? 'Saving...' : 'Save Limits'}
+                </button>
+              </div>
             </div>
 
             {/* Card Preferences */}
             <div className="settings-card">
               <h3 className="card-title">Card Preferences</h3>
+
+              {cardError && (
+                <div className="alert-banner error" style={{ marginBottom: '1rem' }}>
+                  <span>⚠️</span> {cardError}
+                </div>
+              )}
+              {cardSuccess && (
+                <div className="alert-banner success" style={{ marginBottom: '1rem' }}>
+                  <span>✅</span> {cardSuccess}
+                </div>
+              )}
+
               <div className="toggle-list">
                 <div className="toggle-row">
                   <div className="toggle-info">
@@ -576,11 +752,33 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   </label>
                 </div>
               </div>
+
+              <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className="btn-save"
+                  onClick={handleSaveCard}
+                  disabled={cardSaving}
+                >
+                  {cardSaving ? 'Saving...' : 'Save Card Preferences'}
+                </button>
+              </div>
             </div>
 
             {/* Communication Preferences */}
             <div className="settings-card">
               <h3 className="card-title">Communication Preferences</h3>
+
+              {commError && (
+                <div className="alert-banner error" style={{ marginBottom: '1rem' }}>
+                  <span>⚠️</span> {commError}
+                </div>
+              )}
+              {commSuccess && (
+                <div className="alert-banner success" style={{ marginBottom: '1rem' }}>
+                  <span>✅</span> {commSuccess}
+                </div>
+              )}
+
               <div className="toggle-list">
                 <div className="toggle-row">
                   <div className="toggle-info">
@@ -642,6 +840,16 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
+              </div>
+
+              <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  className="btn-save"
+                  onClick={handleSaveComm}
+                  disabled={commSaving}
+                >
+                  {commSaving ? 'Saving...' : 'Save Communication Preferences'}
+                </button>
               </div>
             </div>
 
@@ -725,24 +933,6 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   <li>Go to Health & Fitness page to connect your account</li>
                 </ol>
               </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="settings-actions">
-              <button
-                className="btn-cancel"
-                onClick={handleCancel}
-                disabled={saving}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-save"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
             </div>
           </div>
         </main>

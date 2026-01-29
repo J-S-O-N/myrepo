@@ -7,17 +7,17 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
   const [loading, setLoading] = useState(true);
 
   const accounts = {
-    checking: { balance: 12345.67, account: '****4521' },
-    savings: { balance: 28900.50, account: '****8832' },
-    credit: { balance: -1250.00, account: '****2341' }
+    checking: { balance: 225000.50, account: '****4521' },
+    savings: { balance: 527500.00, account: '****8832' },
+    credit: { balance: -22800.00, account: '****2341' }
   };
 
   const recentTransactions = [
-    { id: 1, name: 'Starbucks', amount: -5.45, date: '2026-01-20', category: 'Food & Drink' },
-    { id: 2, name: 'Salary Deposit', amount: 3500.00, date: '2026-01-19', category: 'Income' },
-    { id: 3, name: 'Netflix', amount: -15.99, date: '2026-01-18', category: 'Entertainment' },
-    { id: 4, name: 'Amazon', amount: -67.32, date: '2026-01-17', category: 'Shopping' },
-    { id: 5, name: 'Transfer to Savings', amount: -500.00, date: '2026-01-16', category: 'Transfer' }
+    { id: 1, name: 'Starbucks', amount: -99.50, date: '2026-01-20', category: 'Food & Drink' },
+    { id: 2, name: 'Salary Deposit', amount: 63800.00, date: '2026-01-19', category: 'Income' },
+    { id: 3, name: 'Netflix', amount: -289.99, date: '2026-01-18', category: 'Entertainment' },
+    { id: 4, name: 'Amazon', amount: -1225.50, date: '2026-01-17', category: 'Shopping' },
+    { id: 5, name: 'Transfer to Savings', amount: -9100.00, date: '2026-01-16', category: 'Transfer' }
   ];
 
   const quickActions = [
@@ -117,7 +117,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
                 <span className="card-number">{accounts.checking.account}</span>
               </div>
               <div className="card-balance">
-                ${accounts.checking.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                R {accounts.checking.balance.toLocaleString('en-ZA', { minimumFractionDigits: 2 })}
               </div>
             </div>
 
@@ -130,7 +130,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
                 <span className="card-number">{accounts.savings.account}</span>
               </div>
               <div className="card-balance">
-                ${accounts.savings.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                R {accounts.savings.balance.toLocaleString('en-ZA', { minimumFractionDigits: 2 })}
               </div>
             </div>
 
@@ -143,7 +143,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
                 <span className="card-number">{accounts.credit.account}</span>
               </div>
               <div className="card-balance">
-                ${Math.abs(accounts.credit.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                R {Math.abs(accounts.credit.balance).toLocaleString('en-ZA', { minimumFractionDigits: 2 })}
               </div>
               <div className="card-label">Current Balance</div>
             </div>
@@ -176,7 +176,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
                     </div>
                   </div>
                   <div className={`transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}`}>
-                    {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                    {transaction.amount > 0 ? '+' : ''}R {Math.abs(transaction.amount).toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -190,15 +190,15 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
             <h3 className="insights-title">Monthly Summary</h3>
             <div className="insight-item">
               <span className="insight-label">Income</span>
-              <span className="insight-value positive">+$3,500.00</span>
+              <span className="insight-value positive">+R 63,800.00</span>
             </div>
             <div className="insight-item">
               <span className="insight-label">Expenses</span>
-              <span className="insight-value negative">-$588.76</span>
+              <span className="insight-value negative">-R 10,714.99</span>
             </div>
             <div className="insight-item">
               <span className="insight-label">Net Savings</span>
-              <span className="insight-value">$2,911.24</span>
+              <span className="insight-value">R 53,085.01</span>
             </div>
           </div>
 
@@ -207,7 +207,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
             <div className="category-item">
               <div className="category-info">
                 <span className="category-name">Food & Drink</span>
-                <span className="category-amount">$245.30</span>
+                <span className="category-amount">R 4,465.50</span>
               </div>
               <div className="category-bar">
                 <div className="category-progress" style={{ width: '45%' }}></div>
@@ -216,7 +216,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
             <div className="category-item">
               <div className="category-info">
                 <span className="category-name">Shopping</span>
-                <span className="category-amount">$187.50</span>
+                <span className="category-amount">R 3,415.00</span>
               </div>
               <div className="category-bar">
                 <div className="category-progress" style={{ width: '35%' }}></div>
@@ -225,7 +225,7 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
             <div className="category-item">
               <div className="category-info">
                 <span className="category-name">Entertainment</span>
-                <span className="category-amount">$155.96</span>
+                <span className="category-amount">R 2,834.49</span>
               </div>
               <div className="category-bar">
                 <div className="category-progress" style={{ width: '28%' }}></div>
