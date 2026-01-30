@@ -4,6 +4,18 @@ import './Accounts.css';
 function Accounts({ userEmail, onLogout, onNavigate }) {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [showTransactionHistory, setShowTransactionHistory] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferForm, setTransferForm] = useState({
+    fromAccount: '',
+    toAccount: '',
+    amount: '',
+    reference: '',
+    scheduledDate: '',
+    transferType: 'immediate', // 'immediate' or 'scheduled'
+  });
+  const [transferError, setTransferError] = useState('');
+  const [transferSuccess, setTransferSuccess] = useState('');
+  const [transferStep, setTransferStep] = useState(1); // 1: Form, 2: Confirmation, 3: Success
 
   const accounts = [
     {
@@ -131,6 +143,110 @@ function Accounts({ userEmail, onLogout, onNavigate }) {
 
   const getSelectedAccountTransactions = () => {
     return transactionHistory[selectedAccount] || [];
+  };
+
+  const openTransferModal = () => {
+    setShowTransferModal(true);
+    setTransferStep(1);
+    setTransferForm({
+      fromAccount: '',
+      toAccount: '',
+      amount: '',
+      reference: '',
+      scheduledDate: '',
+      transferType: 'immediate',
+    });
+    setTransferError('');
+    setTransferSuccess('');
+  };
+
+  const closeTransferModal = () => {
+    setShowTransferModal(false);
+    setTransferStep(1);
+    setTransferForm({
+      fromAccount: '',
+      toAccount: '',
+      amount: '',
+      reference: '',
+      scheduledDate: '',
+      transferType: 'immediate',
+    });
+    setTransferError('');
+    setTransferSuccess('');
+  };
+
+  const handleTransferInputChange = (e) => {
+    const { name, value } = e.target;
+    setTransferForm(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    setTransferError('');
+  };
+
+  const handleTransferTypeChange = (type) => {
+    setTransferForm(prev => ({
+      ...prev,
+      transferType: type,
+    }));
+  };
+
+  const validateTransferForm = () => {
+    if (!transferForm.fromAccount) {
+      setTransferError('Please select a source account');
+      return false;
+    }
+    if (!transferForm.toAccount) {
+      setTransferError('Please select a destination account');
+      return false;
+    }
+    if (transferForm.fromAccount === transferForm.toAccount) {
+      setTransferError('Source and destination accounts must be different');
+      return false;
+    }
+    if (!transferForm.amount || parseFloat(transferForm.amount) <= 0) {
+      setTransferError('Please enter a valid amount');
+      return false;
+    }
+
+    const fromAccount = accounts.find(acc => acc.id === parseInt(transferForm.fromAccount));
+    if (fromAccount && parseFloat(transferForm.amount) > fromAccount.balance) {
+      setTransferError('Insufficient funds in source account');
+      return false;
+    }
+
+    if (transferForm.transferType === 'scheduled' && !transferForm.scheduledDate) {
+      setTransferError('Please select a date for scheduled transfer');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNextStep = () => {
+    if (transferStep === 1) {
+      if (validateTransferForm()) {
+        setTransferStep(2);
+      }
+    }
+  };
+
+  const handleBackStep = () => {
+    if (transferStep === 2) {
+      setTransferStep(1);
+    }
+  };
+
+  const handleConfirmTransfer = () => {
+    // Simulate API call to process transfer
+    setTimeout(() => {
+      setTransferSuccess('Transfer completed successfully!');
+      setTransferStep(3);
+    }, 1000);
+  };
+
+  const getAccountById = (id) => {
+    return accounts.find(acc => acc.id === parseInt(id));
   };
 
   return (
@@ -287,7 +403,7 @@ function Accounts({ userEmail, onLogout, onNavigate }) {
 
           <div className="insights-card">
             <h3 className="insights-title">Quick Actions</h3>
-            <button className="quick-action-item">
+            <button className="quick-action-item" onClick={openTransferModal}>
               <span className="quick-action-icon">💸</span>
               <span className="quick-action-label">Transfer Money</span>
             </button>
@@ -313,6 +429,350 @@ function Accounts({ userEmail, onLogout, onNavigate }) {
           </div>
         </aside>
       </div>
+
+      {/* Transfer Money Modal */}
+      {showTransferModal && (
+        <div className="modal-overlay" onClick={closeTransferModal}>
+          <div className="modal-content transfer-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">
+                {transferStep === 1 && '💸 Transfer Money'}
+                {transferStep === 2 && '✅ Confirm Transfer'}
+                {transferStep === 3 && '🎉 Transfer Complete'}
+              </h2>
+              <button className="modal-close-btn" onClick={closeTransferModal}>✕</button>
+            </div>
+
+            <div className="modal-body">
+              {/* Step 1: Transfer Form */}
+              {transferStep === 1 && (
+                <div className="transfer-form">
+                  {transferError && (
+                    <div className="alert-banner error">
+                      <span>⚠️</span> {transferError}
+                    </div>
+                  )}
+
+                  {/* Transfer Type Selection */}
+                  <div className="transfer-type-selector">
+                    <button
+                      className={`transfer-type-btn ${transferForm.transferType === 'immediate' ? 'active' : ''}`}
+                      onClick={() => handleTransferTypeChange('immediate')}
+                    >
+                      <span className="type-icon">⚡</span>
+                      <div className="type-info">
+                        <div className="type-name">Immediate Transfer</div>
+                        <div className="type-desc">Transfer funds instantly</div>
+                      </div>
+                    </button>
+                    <button
+                      className={`transfer-type-btn ${transferForm.transferType === 'scheduled' ? 'active' : ''}`}
+                      onClick={() => handleTransferTypeChange('scheduled')}
+                    >
+                      <span className="type-icon">📅</span>
+                      <div className="type-info">
+                        <div className="type-name">Scheduled Transfer</div>
+                        <div className="type-desc">Schedule for a future date</div>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* From Account */}
+                  <div className="form-group">
+                    <label htmlFor="fromAccount">From Account</label>
+                    <select
+                      id="fromAccount"
+                      name="fromAccount"
+                      value={transferForm.fromAccount}
+                      onChange={handleTransferInputChange}
+                      className="transfer-select"
+                    >
+                      <option value="">Select source account</option>
+                      {accounts.map(account => (
+                        <option key={account.id} value={account.id}>
+                          {account.icon} {account.name} - {formatCurrency(account.balance)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* To Account */}
+                  <div className="form-group">
+                    <label htmlFor="toAccount">To Account</label>
+                    <select
+                      id="toAccount"
+                      name="toAccount"
+                      value={transferForm.toAccount}
+                      onChange={handleTransferInputChange}
+                      className="transfer-select"
+                    >
+                      <option value="">Select destination account</option>
+                      {accounts
+                        .filter(acc => acc.id !== parseInt(transferForm.fromAccount))
+                        .map(account => (
+                          <option key={account.id} value={account.id}>
+                            {account.icon} {account.name} - {formatCurrency(account.balance)}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  {/* Amount */}
+                  <div className="form-group">
+                    <label htmlFor="amount">Amount (ZAR)</label>
+                    <div className="amount-input-wrapper">
+                      <span className="currency-symbol">R</span>
+                      <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        value={transferForm.amount}
+                        onChange={handleTransferInputChange}
+                        placeholder="0.00"
+                        className="transfer-input amount-input"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                    {transferForm.fromAccount && (
+                      <small className="form-hint">
+                        Available: {formatCurrency(getAccountById(transferForm.fromAccount)?.balance || 0)}
+                      </small>
+                    )}
+                  </div>
+
+                  {/* Reference */}
+                  <div className="form-group">
+                    <label htmlFor="reference">Reference (Optional)</label>
+                    <input
+                      type="text"
+                      id="reference"
+                      name="reference"
+                      value={transferForm.reference}
+                      onChange={handleTransferInputChange}
+                      placeholder="e.g., Monthly savings"
+                      className="transfer-input"
+                      maxLength="50"
+                    />
+                  </div>
+
+                  {/* Scheduled Date (if scheduled transfer) */}
+                  {transferForm.transferType === 'scheduled' && (
+                    <div className="form-group">
+                      <label htmlFor="scheduledDate">Transfer Date</label>
+                      <input
+                        type="date"
+                        id="scheduledDate"
+                        name="scheduledDate"
+                        value={transferForm.scheduledDate}
+                        onChange={handleTransferInputChange}
+                        className="transfer-input"
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
+                  )}
+
+                  {/* Quick Amount Buttons */}
+                  {transferForm.fromAccount && (
+                    <div className="quick-amounts">
+                      <span className="quick-amounts-label">Quick amounts:</span>
+                      <button
+                        type="button"
+                        className="quick-amount-btn"
+                        onClick={() => setTransferForm(prev => ({
+                          ...prev,
+                          amount: (getAccountById(transferForm.fromAccount)?.balance * 0.25).toFixed(2)
+                        }))}
+                      >
+                        25%
+                      </button>
+                      <button
+                        type="button"
+                        className="quick-amount-btn"
+                        onClick={() => setTransferForm(prev => ({
+                          ...prev,
+                          amount: (getAccountById(transferForm.fromAccount)?.balance * 0.5).toFixed(2)
+                        }))}
+                      >
+                        50%
+                      </button>
+                      <button
+                        type="button"
+                        className="quick-amount-btn"
+                        onClick={() => setTransferForm(prev => ({
+                          ...prev,
+                          amount: (getAccountById(transferForm.fromAccount)?.balance * 0.75).toFixed(2)
+                        }))}
+                      >
+                        75%
+                      </button>
+                      <button
+                        type="button"
+                        className="quick-amount-btn"
+                        onClick={() => setTransferForm(prev => ({
+                          ...prev,
+                          amount: getAccountById(transferForm.fromAccount)?.balance.toFixed(2)
+                        }))}
+                      >
+                        All
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 2: Confirmation */}
+              {transferStep === 2 && (
+                <div className="transfer-confirmation">
+                  <div className="confirmation-card">
+                    <div className="confirmation-header">
+                      <span className="confirmation-icon">💸</span>
+                      <h3>Review Transfer Details</h3>
+                    </div>
+
+                    <div className="confirmation-details">
+                      <div className="confirmation-row">
+                        <span className="confirmation-label">From:</span>
+                        <span className="confirmation-value">
+                          {getAccountById(transferForm.fromAccount)?.icon} {getAccountById(transferForm.fromAccount)?.name}
+                          <br />
+                          <small>****{getAccountById(transferForm.fromAccount)?.accountNumber.slice(-4)}</small>
+                        </span>
+                      </div>
+
+                      <div className="confirmation-arrow">↓</div>
+
+                      <div className="confirmation-row">
+                        <span className="confirmation-label">To:</span>
+                        <span className="confirmation-value">
+                          {getAccountById(transferForm.toAccount)?.icon} {getAccountById(transferForm.toAccount)?.name}
+                          <br />
+                          <small>****{getAccountById(transferForm.toAccount)?.accountNumber.slice(-4)}</small>
+                        </span>
+                      </div>
+
+                      <div className="confirmation-divider"></div>
+
+                      <div className="confirmation-row highlight">
+                        <span className="confirmation-label">Amount:</span>
+                        <span className="confirmation-value amount">
+                          {formatCurrency(parseFloat(transferForm.amount))}
+                        </span>
+                      </div>
+
+                      {transferForm.reference && (
+                        <div className="confirmation-row">
+                          <span className="confirmation-label">Reference:</span>
+                          <span className="confirmation-value">{transferForm.reference}</span>
+                        </div>
+                      )}
+
+                      <div className="confirmation-row">
+                        <span className="confirmation-label">Transfer Type:</span>
+                        <span className="confirmation-value">
+                          {transferForm.transferType === 'immediate' ? '⚡ Immediate' : '📅 Scheduled'}
+                        </span>
+                      </div>
+
+                      {transferForm.transferType === 'scheduled' && (
+                        <div className="confirmation-row">
+                          <span className="confirmation-label">Scheduled Date:</span>
+                          <span className="confirmation-value">{transferForm.scheduledDate}</span>
+                        </div>
+                      )}
+
+                      <div className="confirmation-divider"></div>
+
+                      <div className="confirmation-row">
+                        <span className="confirmation-label">Processing Time:</span>
+                        <span className="confirmation-value">
+                          {transferForm.transferType === 'immediate' ? 'Instant' : 'On scheduled date'}
+                        </span>
+                      </div>
+
+                      <div className="confirmation-row">
+                        <span className="confirmation-label">Transfer Fee:</span>
+                        <span className="confirmation-value free">R 0.00 (Free)</span>
+                      </div>
+                    </div>
+
+                    <div className="confirmation-warning">
+                      <span className="warning-icon">ℹ️</span>
+                      <p>Please review all details carefully. This action cannot be undone after confirmation.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Success */}
+              {transferStep === 3 && (
+                <div className="transfer-success">
+                  <div className="success-icon-wrapper">
+                    <span className="success-icon">✅</span>
+                  </div>
+                  <h3 className="success-title">Transfer Successful!</h3>
+                  <p className="success-message">
+                    Your transfer of {formatCurrency(parseFloat(transferForm.amount))} has been processed successfully.
+                  </p>
+
+                  <div className="success-details">
+                    <div className="success-row">
+                      <span className="success-label">From:</span>
+                      <span className="success-value">
+                        {getAccountById(transferForm.fromAccount)?.name}
+                      </span>
+                    </div>
+                    <div className="success-row">
+                      <span className="success-label">To:</span>
+                      <span className="success-value">
+                        {getAccountById(transferForm.toAccount)?.name}
+                      </span>
+                    </div>
+                    <div className="success-row">
+                      <span className="success-label">Reference:</span>
+                      <span className="success-value">
+                        {transferForm.reference || 'TRF' + Date.now().toString().slice(-8)}
+                      </span>
+                    </div>
+                    <div className="success-row">
+                      <span className="success-label">Date:</span>
+                      <span className="success-value">
+                        {transferForm.transferType === 'immediate'
+                          ? new Date().toLocaleDateString('en-ZA')
+                          : transferForm.scheduledDate}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="success-actions">
+                    <button className="btn-secondary" onClick={closeTransferModal}>
+                      Done
+                    </button>
+                    <button className="btn-primary" onClick={openTransferModal}>
+                      Make Another Transfer
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer - Only show for steps 1 and 2 */}
+            {transferStep !== 3 && (
+              <div className="modal-footer">
+                <button className="btn-secondary" onClick={transferStep === 1 ? closeTransferModal : handleBackStep}>
+                  {transferStep === 1 ? 'Cancel' : 'Back'}
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={transferStep === 1 ? handleNextStep : handleConfirmTransfer}
+                >
+                  {transferStep === 1 ? 'Continue' : 'Confirm Transfer'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Transaction History Modal */}
       {showTransactionHistory && selectedAccount && (
