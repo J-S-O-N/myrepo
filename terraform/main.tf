@@ -144,6 +144,49 @@ module "ecs" {
   task_cpu           = lookup(var.ecs_cpu, var.environment, "256")
   task_memory        = lookup(var.ecs_memory, var.environment, "512")
   desired_count       = lookup(var.ecs_desired_count, var.environment, 1)
+
+  environment_variables = [
+    {
+      name  = "NODE_ENV"
+      value = var.environment
+    },
+    {
+      name  = "DB_HOST"
+      value = module.rds.db_endpoint
+    },
+    {
+      name  = "DB_PORT"
+      value = "5432"
+    },
+    {
+      name  = "DB_NAME"
+      value = "testaiapp"
+    },
+    {
+      name  = "DB_USER"
+      value = "postgres"
+    },
+    {
+      name  = "DB_PASSWORD"
+      value = "xAxRdctU5#}+i]IvY$u=_Dsz&EdZ>BA2"
+    },
+    {
+      name  = "DB_DIALECT"
+      value = "postgres"
+    },
+    {
+      name  = "JWT_SECRET"
+      value = "b+NxH+z3pSd8hlp4TrDbzBmkH81cZkDJ6PXqk5k/3Bc="
+    },
+    {
+      name  = "PORT"
+      value = "3001"
+    },
+    {
+      name  = "CORS_ORIGIN"
+      value = "https://d7mq5w0ntx5im.cloudfront.net"
+    }
+  ]
 }
 
 module "cloudfront" {

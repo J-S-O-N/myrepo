@@ -9,7 +9,10 @@ const stravaRoutes = require('./routes/strava.cjs');
 const configRoutes = require('./routes/config.cjs');
 const onboardingRoutes = require('./routes/onboarding.cjs');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+// Only load .env in development (don't override ECS environment variables)
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  require('dotenv').config({ path: path.join(__dirname, '../.env') });
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
