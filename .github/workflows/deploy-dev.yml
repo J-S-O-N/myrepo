@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: bankapp-dev
   ECS_SERVICE: bankapp-dev-service
-  ECS_CLUSTER: bankapp-dev-cluster
+  ECS_CLUSTER: bankapp-dev
   ECS_TASK_DEFINITION: bankapp-dev-task
   CONTAINER_NAME: bankapp-backend
 

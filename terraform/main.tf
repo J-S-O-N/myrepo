@@ -103,12 +103,12 @@ module "ecr" {
 module "rds" {
   source = "./modules/rds"
 
-  environment         = var.environment
-  project_name        = var.project_name
-  vpc_id              = module.vpc.vpc_id
-  private_subnet_ids  = module.vpc.private_subnet_ids
-  db_instance_class   = lookup(var.db_instance_classes, var.environment, "db.t3.micro")
-  multi_az            = var.environment != "dev"
+  environment            = var.environment
+  project_name           = var.project_name
+  vpc_id                 = module.vpc.vpc_id
+  private_subnet_ids     = module.vpc.private_subnet_ids
+  vpc_cidr            = module.vpc.vpc_cidr
+  instance_class         = lookup(var.db_instance_classes, var.environment, "db.t3.micro")
 }
 
 module "alb" {
@@ -127,13 +127,12 @@ module "ecs" {
   project_name        = var.project_name
   vpc_id              = module.vpc.vpc_id
   private_subnet_ids  = module.vpc.private_subnet_ids
-  alb_target_group_arn = module.alb.target_group_arn
-  alb_security_group_id = module.alb.security_group_id
+  target_group_arn     = module.alb.target_group_arn
+  alb_listener_arn = module.alb.http_listener_arn
+  alb_security_group_id = module.alb.alb_security_group_id
   ecr_repository_url  = module.ecr.repository_url
-  db_endpoint         = module.rds.db_endpoint
-  db_name             = module.rds.db_name
-  cpu                 = lookup(var.ecs_cpu, var.environment, "256")
-  memory              = lookup(var.ecs_memory, var.environment, "512")
+  task_cpu           = lookup(var.ecs_cpu, var.environment, "256")
+  task_memory        = lookup(var.ecs_memory, var.environment, "512")
   desired_count       = lookup(var.ecs_desired_count, var.environment, 1)
 }
 
@@ -151,8 +150,7 @@ module "cloudfront" {
   environment    = var.environment
   project_name   = var.project_name
   s3_bucket_name = module.s3.bucket_name
-  s3_bucket_domain_name = module.s3.bucket_domain_name
-  alb_dns_name   = module.alb.alb_dns_name
+  s3_bucket_regional_domain_name = module.s3.bucket_regional_domain_name
 }
 
 # Environment-specific variables
