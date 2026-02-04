@@ -84,6 +84,16 @@ output "ecr_repository_url" {
   value       = module.ecr.repository_url
 }
 
+output "cloudfront_domain_name" {
+  description = "CloudFront distribution domain name"
+  value       = module.cloudfront.distribution_domain_name
+}
+
+output "cloudfront_distribution_id" {
+  description = "CloudFront distribution ID"
+  value       = module.cloudfront.distribution_id
+}
+
 # Module calls
 module "vpc" {
   source = "./modules/vpc"
@@ -136,21 +146,22 @@ module "ecs" {
   desired_count       = lookup(var.ecs_desired_count, var.environment, 1)
 }
 
-module "s3" {
-  source = "./modules/s3"
-
-  environment  = var.environment
-  project_name = var.project_name
-}
-
 module "cloudfront" {
   source = "./modules/cloudfront"
-  count  = var.environment != "dev" ? 1 : 0
+  # count  = var.environment != "dev" ? 1 : 0  # Enabled for all environments
 
   environment    = var.environment
   project_name   = var.project_name
   s3_bucket_name = module.s3.bucket_name
   s3_bucket_regional_domain_name = module.s3.bucket_regional_domain_name
+}
+
+module "s3" {
+  source = "./modules/s3"
+
+  environment  = var.environment
+  project_name = var.project_name
+  cloudfront_oai_iam_arn = module.cloudfront.oai_iam_arn
 }
 
 # Environment-specific variables
