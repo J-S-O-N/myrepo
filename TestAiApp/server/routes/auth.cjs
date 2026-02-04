@@ -32,22 +32,11 @@ router.post(
         return res.status(409).json({ error: 'User already exists' });
       }
 
-      // Hash password
-      console.log('Registration - Password to hash:', password);
-      const password_hash = await bcrypt.hash(password, 10);
-      console.log('Registration - Generated hash:', password_hash);
-
-      // Immediately test the hash
-      const testCompare = await bcrypt.compare(password, password_hash);
-      console.log('Registration - Immediate hash test:', testCompare);
-
-      // Create user
+      // Create user (password will be hashed by User model's beforeCreate hook)
       const user = await User.create({
         email,
-        password_hash,
+        password_hash: password, // Pass plain password, model will hash it
       });
-
-      console.log('Registration - Hash saved to DB:', user.password_hash);
 
       // Create default settings for the user (per-user isolation)
       await UserSettings.create({
@@ -108,18 +97,12 @@ router.post(
 
       // Find user
       const user = await User.findOne({ where: { email } });
-      console.log('Login attempt for:', email);
-      console.log('User found:', !!user);
       if (!user) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
 
-      console.log('Password hash from DB:', user.password_hash);
-      console.log('Password provided:', password);
-
       // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password_hash);
-      console.log('Password valid:', isValidPassword);
       if (!isValidPassword) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
