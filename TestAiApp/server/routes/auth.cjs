@@ -33,13 +33,21 @@ router.post(
       }
 
       // Hash password
+      console.log('Registration - Password to hash:', password);
       const password_hash = await bcrypt.hash(password, 10);
+      console.log('Registration - Generated hash:', password_hash);
+
+      // Immediately test the hash
+      const testCompare = await bcrypt.compare(password, password_hash);
+      console.log('Registration - Immediate hash test:', testCompare);
 
       // Create user
       const user = await User.create({
         email,
         password_hash,
       });
+
+      console.log('Registration - Hash saved to DB:', user.password_hash);
 
       // Create default settings for the user (per-user isolation)
       await UserSettings.create({
