@@ -197,6 +197,7 @@ module "cloudfront" {
   project_name   = var.project_name
   s3_bucket_name = module.s3.bucket_name
   s3_bucket_regional_domain_name = module.s3.bucket_regional_domain_name
+  alb_dns_name   = module.alb.alb_dns_name
 }
 
 module "s3" {

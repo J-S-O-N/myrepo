@@ -22,6 +22,48 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
+  # ALB origin for API requests (only if ALB DNS name is provided)
+  dynamic "origin" {
+    for_each = var.alb_dns_name != "" ? [1] : []
+    content {
+      domain_name = var.alb_dns_name
+      origin_id   = "ALB-${var.project_name}-${var.environment}"
+
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "http-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+    }
+  }
+
+  # Cache behavior for API requests
+  dynamic "ordered_cache_behavior" {
+    for_each = var.alb_dns_name != "" ? [1] : []
+    content {
+      path_pattern     = "/api/*"
+      target_origin_id = "ALB-${var.project_name}-${var.environment}"
+      allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods   = ["GET", "HEAD", "OPTIONS"]
+
+      forwarded_values {
+        query_string = true
+        headers      = ["Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Authorization"]
+
+        cookies {
+          forward = "all"
+        }
+      }
+
+      viewer_protocol_policy = "redirect-to-https"
+      min_ttl                = 0
+      default_ttl            = 0
+      max_ttl                = 0
+      compress               = false
+    }
+  }
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
