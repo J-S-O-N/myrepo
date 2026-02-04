@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Health.css';
+import { API_URL } from '../config';
 
 function Health({ userEmail, onLogout, onNavigate }) {
   const [selectedPeriod, setSelectedPeriod] = useState('week');
@@ -71,7 +72,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const checkStravaStatus = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/strava/status', {
+      const response = await fetch('${API_URL}/api/strava/status', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -91,7 +92,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const handleConnectStrava = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/strava/auth', {
+      const response = await fetch('${API_URL}/api/strava/auth', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -117,7 +118,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
 
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/strava/disconnect', {
+      const response = await fetch('${API_URL}/api/strava/disconnect', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -136,7 +137,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const fetchStravaActivities = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/strava/activities', {
+      const response = await fetch('${API_URL}/api/strava/activities', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

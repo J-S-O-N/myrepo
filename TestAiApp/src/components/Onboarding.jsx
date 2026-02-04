@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Onboarding.css';
+import { API_URL } from '../config';
 
 const Onboarding = ({ token, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -34,7 +35,7 @@ const Onboarding = ({ token, onComplete }) => {
     const timer = setTimeout(async () => {
       setCheckingUsername(true);
       try {
-        const response = await fetch(`http://localhost:3001/api/onboarding/username-available/${formData.username}`);
+        const response = await fetch(`${API_URL}/api/onboarding/username-available/${formData.username}`);
 
         const data = await response.json();
         setUsernameAvailable(data.available);
@@ -123,7 +124,7 @@ const Onboarding = ({ token, onComplete }) => {
         }
 
         // Save step 1 data to backend
-        const response = await fetch('http://localhost:3001/api/onboarding/step1', {
+        const response = await fetch('${API_URL}/api/onboarding/step1', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -158,7 +159,7 @@ const Onboarding = ({ token, onComplete }) => {
 
         // Save step 2 data to backend
         console.log('Step 2: Sending POST to /api/onboarding/step2');
-        const response = await fetch('http://localhost:3001/api/onboarding/step2', {
+        const response = await fetch('${API_URL}/api/onboarding/step2', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -205,7 +206,7 @@ const Onboarding = ({ token, onComplete }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/onboarding/complete', {
+      const response = await fetch('${API_URL}/api/onboarding/complete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -10,6 +10,7 @@ import BuyHub from './components/BuyHub';
 import Goals from './components/Goals';
 import StockPerformance from './components/StockPerformance';
 import Settings from './components/Settings';
+import { API_URL } from './config';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,7 +43,7 @@ function App() {
   const checkOnboardingStatus = async (authToken) => {
     setCheckingOnboarding(true);
     try {
-      const response = await fetch('http://localhost:3001/api/onboarding/status', {
+      const response = await fetch(`${API_URL}/api/onboarding/status`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
         },

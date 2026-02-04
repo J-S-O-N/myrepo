@@ -15,8 +15,23 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173', // Vite dev server
+  'https://d7mq5w0ntx5im.cloudfront.net', // CloudFront distribution
+  process.env.CORS_ORIGIN // Additional origins from env
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite dev server
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());

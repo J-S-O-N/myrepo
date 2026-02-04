@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css';
 import './Goals.css';
+import { API_URL } from '../config';
 
 function Goals({ userEmail, token, onLogout, onNavigate }) {
   const [goals, setGoals] = useState([]);
@@ -44,7 +45,7 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
       setLoading(true);
       setError('');
 
-      const response = await fetch('http://localhost:3001/api/goals', {
+      const response = await fetch('${API_URL}/api/goals', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -136,8 +137,8 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
       };
 
       const url = editingGoal
-        ? `http://localhost:3001/api/goals/${editingGoal.id}`
-        : 'http://localhost:3001/api/goals';
+        ? `${API_URL}/api/goals/${editingGoal.id}`
+        : '${API_URL}/api/goals';
 
       const response = await fetch(url, {
         method: editingGoal ? 'PUT' : 'POST',
@@ -166,7 +167,7 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/goals/${goalId}`, {
+      const response = await fetch(`${API_URL}/api/goals/${goalId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -210,7 +211,7 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
 
       const newCurrentAmount = savingToGoal.current_amount + amountInCents;
 
-      const response = await fetch(`http://localhost:3001/api/goals/${savingToGoal.id}`, {
+      const response = await fetch(`${API_URL}/api/goals/${savingToGoal.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

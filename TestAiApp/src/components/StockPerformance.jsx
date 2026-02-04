@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css';
 import './StockPerformance.css';
+import { API_URL } from '../config';
 
 function StockPerformance({ userEmail, onLogout, onNavigate }) {
   const [stocks, setStocks] = useState([]);
@@ -13,7 +14,7 @@ function StockPerformance({ userEmail, onLogout, onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/stocks/jse');
+      const response = await fetch('${API_URL}/api/stocks/jse');
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);

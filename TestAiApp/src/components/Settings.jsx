@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css';
 import './Settings.css';
+import { API_URL } from '../config';
 
 function Settings({ userEmail, token, onLogout, onNavigate }) {
   const [settings, setSettings] = useState(null);
@@ -69,7 +70,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
     try {
       setLoading(true);
 
-      const response = await fetch('http://localhost:3001/api/settings', {
+      const response = await fetch('${API_URL}/api/settings', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -77,7 +78,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
       if (response.status === 404) {
         // Initialize settings if they don't exist
-        const initResponse = await fetch('http://localhost:3001/api/settings/initialize', {
+        const initResponse = await fetch('${API_URL}/api/settings/initialize', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -126,7 +127,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
   const fetchStravaConfig = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/config/strava', {
+      const response = await fetch('${API_URL}/api/config/strava', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -163,7 +164,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/config/strava', {
+      const response = await fetch('${API_URL}/api/config/strava', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +241,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         country: formData.country,
       };
 
-      const response = await fetch('http://localhost:3001/api/settings', {
+      const response = await fetch('${API_URL}/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -287,7 +288,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         atm_limit: Math.round(parseFloat(formData.atm_limit) * 100),
       };
 
-      const response = await fetch('http://localhost:3001/api/settings', {
+      const response = await fetch('${API_URL}/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -325,7 +326,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         international_transactions_enabled: formData.international_transactions_enabled,
       };
 
-      const response = await fetch('http://localhost:3001/api/settings', {
+      const response = await fetch('${API_URL}/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -363,7 +364,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         in_app_notifications: formData.in_app_notifications,
       };
 
-      const response = await fetch('http://localhost:3001/api/settings', {
+      const response = await fetch('${API_URL}/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -917,7 +918,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   {stravaSaving ? 'Saving...' : 'Save Strava Config'}
                 </button>
                 <small className="field-hint">
-                  Redirect URI: {stravaConfig.redirectUri || 'http://localhost:3001/api/strava/callback'}
+                  Redirect URI: {stravaConfig.redirectUri || '${API_URL}/api/strava/callback'}
                 </small>
               </div>
 
@@ -927,7 +928,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
                   <li>Go to <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener noreferrer">Strava API Settings</a></li>
                   <li>Create a new application or use an existing one</li>
                   <li>Set Authorization Callback Domain to: <code>localhost</code></li>
-                  <li>Set Authorization Callback URL to: <code>{stravaConfig.redirectUri || 'http://localhost:3001/api/strava/callback'}</code></li>
+                  <li>Set Authorization Callback URL to: <code>{stravaConfig.redirectUri || '${API_URL}/api/strava/callback'}</code></li>
                   <li>Copy your Client ID and Client Secret</li>
                   <li>Paste them in the fields above and click "Save Strava Config"</li>
                   <li>Go to Health & Fitness page to connect your account</li>

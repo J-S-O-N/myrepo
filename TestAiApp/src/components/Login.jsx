@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Login.css';
+import { API_URL } from '../config';
 
 function Login({ onLogin }) {
   const [formData, setFormData] = useState({
@@ -94,7 +95,7 @@ function Login({ onLogin }) {
 
     try {
       // Try login first
-      const loginResponse = await fetch('http://localhost:3001/api/auth/login', {
+      const loginResponse = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +120,7 @@ function Login({ onLogin }) {
         const loginData = await loginResponse.json();
 
         // Try to register in case this is a new user
-        const registerResponse = await fetch('http://localhost:3001/api/auth/register', {
+        const registerResponse = await fetch(`${API_URL}/api/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
