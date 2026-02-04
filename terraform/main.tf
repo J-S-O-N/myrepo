@@ -152,7 +152,7 @@ module "ecs" {
     },
     {
       name  = "DB_HOST"
-      value = module.rds.db_endpoint
+      value = module.rds.db_address
     },
     {
       name  = "DB_PORT"
