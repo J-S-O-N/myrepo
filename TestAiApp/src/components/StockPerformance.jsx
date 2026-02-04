@@ -14,7 +14,7 @@ function StockPerformance({ userEmail, onLogout, onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('${API_URL}/api/stocks/jse');
+      const response = await fetch(`${API_URL}/api/stocks/jse`);
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);

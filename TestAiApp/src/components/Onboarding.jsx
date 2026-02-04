@@ -124,7 +124,7 @@ const Onboarding = ({ token, onComplete }) => {
         }
 
         // Save step 1 data to backend
-        const response = await fetch('${API_URL}/api/onboarding/step1', {
+        const response = await fetch(`${API_URL}/api/onboarding/step1`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const Onboarding = ({ token, onComplete }) => {
 
         // Save step 2 data to backend
         console.log('Step 2: Sending POST to /api/onboarding/step2');
-        const response = await fetch('${API_URL}/api/onboarding/step2', {
+        const response = await fetch(`${API_URL}/api/onboarding/step2`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ const Onboarding = ({ token, onComplete }) => {
     setError('');
 
     try {
-      const response = await fetch('${API_URL}/api/onboarding/complete', {
+      const response = await fetch(`${API_URL}/api/onboarding/complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

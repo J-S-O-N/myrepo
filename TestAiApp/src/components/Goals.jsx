@@ -45,7 +45,7 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
       setLoading(true);
       setError('');
 
-      const response = await fetch('${API_URL}/api/goals', {
+      const response = await fetch(`${API_URL}/api/goals`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -138,7 +138,7 @@ function Goals({ userEmail, token, onLogout, onNavigate }) {
 
       const url = editingGoal
         ? `${API_URL}/api/goals/${editingGoal.id}`
-        : '${API_URL}/api/goals';
+        : `${API_URL}/api/goals`;
 
       const response = await fetch(url, {
         method: editingGoal ? 'PUT' : 'POST',

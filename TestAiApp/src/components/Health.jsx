@@ -72,7 +72,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const checkStravaStatus = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('${API_URL}/api/strava/status', {
+      const response = await fetch(`${API_URL}/api/strava/status`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -92,7 +92,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const handleConnectStrava = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('${API_URL}/api/strava/auth', {
+      const response = await fetch(`${API_URL}/api/strava/auth`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -118,7 +118,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
 
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('${API_URL}/api/strava/disconnect', {
+      const response = await fetch(`${API_URL}/api/strava/disconnect`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -137,7 +137,7 @@ function Health({ userEmail, onLogout, onNavigate }) {
   const fetchStravaActivities = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('${API_URL}/api/strava/activities', {
+      const response = await fetch(`${API_URL}/api/strava/activities`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

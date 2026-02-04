@@ -70,7 +70,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
     try {
       setLoading(true);
 
-      const response = await fetch('${API_URL}/api/settings', {
+      const response = await fetch(`${API_URL}/api/settings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -78,7 +78,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
       if (response.status === 404) {
         // Initialize settings if they don't exist
-        const initResponse = await fetch('${API_URL}/api/settings/initialize', {
+        const initResponse = await fetch(`${API_URL}/api/settings/initialize`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -127,7 +127,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
 
   const fetchStravaConfig = async () => {
     try {
-      const response = await fetch('${API_URL}/api/config/strava', {
+      const response = await fetch(`${API_URL}/api/config/strava`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -164,7 +164,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         return;
       }
 
-      const response = await fetch('${API_URL}/api/config/strava', {
+      const response = await fetch(`${API_URL}/api/config/strava`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -241,7 +241,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         country: formData.country,
       };
 
-      const response = await fetch('${API_URL}/api/settings', {
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         atm_limit: Math.round(parseFloat(formData.atm_limit) * 100),
       };
 
-      const response = await fetch('${API_URL}/api/settings', {
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -326,7 +326,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         international_transactions_enabled: formData.international_transactions_enabled,
       };
 
-      const response = await fetch('${API_URL}/api/settings', {
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ function Settings({ userEmail, token, onLogout, onNavigate }) {
         in_app_notifications: formData.in_app_notifications,
       };
 
-      const response = await fetch('${API_URL}/api/settings', {
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
