@@ -26,7 +26,7 @@ A modern, full-stack banking application built with React, Node.js, and deployed
 
 **Backend:**
 - Node.js 18.x with Express.js
-- PostgreSQL (Production) / SQLite (Development)
+- PostgreSQL 14+ (Development & Production)
 - Sequelize ORM
 - JWT authentication with bcryptjs
 
@@ -91,7 +91,7 @@ myrepo/
 
 - Node.js 18.x or later
 - npm or yarn
-- PostgreSQL (for production) or SQLite (for development)
+- PostgreSQL 14+ (for both development and production)
 
 ### Local Development
 

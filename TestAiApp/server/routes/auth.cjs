@@ -29,7 +29,7 @@ router.post(
       // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        return res.status(400).json({ error: 'User already exists' });
+        return res.status(409).json({ error: 'User already exists' });
       }
 
       // Hash password

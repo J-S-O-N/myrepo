@@ -30,7 +30,7 @@ Goal.belongsTo(User, {
 // Sync database (create tables if they don't exist)
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: false });
+    await sequelize.sync();
     console.log('✅ Database synced successfully');
   } catch (error) {
     console.error('❌ Database sync error:', error);

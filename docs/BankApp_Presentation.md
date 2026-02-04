@@ -44,13 +44,13 @@ A modern, secure, and feature-rich banking application demonstrating best practi
 └─────────────┬───────────────────────────┘
               │ Sequelize ORM
 ┌─────────────▼───────────────────────────┐
-│   Database (SQLite dev / PostgreSQL)    │
+│      Database (PostgreSQL 14+)          │
 │    Users | Settings | Goals Tables      │
 └─────────────────────────────────────────┘
 ```
 
 ### 🔄 Development Flow
-- **Local Development**: SQLite + Vite Dev Server
+- **Local Development**: PostgreSQL + Vite Dev Server
 - **Production**: PostgreSQL + Docker + AWS ECS
 
 ---
@@ -588,8 +588,11 @@ describe('Settings API Integration', () => {
 #### Development (.env)
 ```bash
 NODE_ENV=development
-DB_DIALECT=sqlite
-DB_STORAGE=./server/database.sqlite
+DB_DIALECT=postgres
+DB_NAME=testaiapp
+DB_USER=jonathan.singh
+DB_HOST=localhost
+DB_PORT=5432
 JWT_SECRET=dev-secret-key
 PORT=3001
 CORS_ORIGIN=http://localhost:5173
@@ -860,8 +863,7 @@ TestAiApp/
 - express-validator 7.3.1
 
 #### Database
-- SQLite (Development)
-- PostgreSQL (Production)
+- PostgreSQL 14+ (Development & Production)
 
 #### Cloud Infrastructure
 - AWS VPC, EC2, ECS Fargate
@@ -923,7 +925,7 @@ TestAiApp/
 #### Phase 1: Foundation (Completed)
 ✅ React frontend setup with Vite
 ✅ Express backend with REST API
-✅ SQLite database with Sequelize
+✅ PostgreSQL database with Sequelize
 ✅ User authentication (JWT + bcrypt)
 ✅ Basic dashboard UI
 

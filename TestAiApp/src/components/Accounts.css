@@ -81,6 +81,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .currency-symbol {
@@ -89,10 +90,12 @@
   font-weight: 600;
   color: #6b7280;
   pointer-events: none;
+  z-index: 1;
 }
 
 .amount-input {
-  padding-left: 2.5rem;
+  padding-left: 2.5rem !important;
+  width: 100%;
 }
 
 .form-hint {

@@ -8,8 +8,7 @@ const stocksRoutes = require('./routes/stocks.cjs');
 const stravaRoutes = require('./routes/strava.cjs');
 const configRoutes = require('./routes/config.cjs');
 const onboardingRoutes = require('./routes/onboarding.cjs');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,7 +28,6 @@ app.use('/api/goals', goalsRoutes);
 app.use('/api/stocks', stocksRoutes);
 app.use('/api/strava', stravaRoutes);
 app.use('/api/config', configRoutes);
-app.use('/api/onboarding', onboardingRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

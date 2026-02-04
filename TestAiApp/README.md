@@ -4,22 +4,44 @@ A modern React application built with Vite.
 
 ## Prerequisites
 
-Before running this project, you need to install Node.js:
-- Download and install Node.js from https://nodejs.org/ (LTS version recommended)
+Before running this project, you need:
+- **Node.js**: Download from https://nodejs.org/ (LTS version recommended)
+- **PostgreSQL 14**: Database server for persistent storage
+  ```bash
+  brew install postgresql@14
+  brew services start postgresql@14
+  ```
 
 ## Getting Started
 
-1. Install dependencies:
+1. **Install dependencies**:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+2. **Configure environment**:
+   - Copy `.env.example` to `.env` (or use existing `.env`)
+   - Update database credentials if needed
+   - Default configuration uses PostgreSQL on localhost:5432
+
+3. **Create database**:
+```bash
+createdb testaiapp
+```
+
+4. **Start the backend server** (Terminal 1):
+```bash
+node server/index.cjs
+```
+
+5. **Start the frontend dev server** (Terminal 2):
 ```bash
 npm run dev
 ```
 
-The app will open automatically in your browser at http://localhost:3000
+The app will be available at:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001
 
 ## Available Scripts
 
