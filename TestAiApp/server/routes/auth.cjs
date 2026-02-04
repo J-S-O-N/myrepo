@@ -100,12 +100,18 @@ router.post(
 
       // Find user
       const user = await User.findOne({ where: { email } });
+      console.log('Login attempt for:', email);
+      console.log('User found:', !!user);
       if (!user) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
 
+      console.log('Password hash from DB:', user.password_hash);
+      console.log('Password provided:', password);
+
       // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password_hash);
+      console.log('Password valid:', isValidPassword);
       if (!isValidPassword) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
