@@ -77,7 +77,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # TODO: Uncomment these steps after creating ECS infrastructure
+      # Backend deployment to ECS (commented until ECS infrastructure is ready)
       # - name: Download task definition
       #   run: |
       #     aws ecs describe-task-definition \
@@ -99,19 +99,30 @@ jobs:
       #     service: ${{ env.ECS_SERVICE }}
       #     cluster: ${{ env.ECS_CLUSTER }}
       #     wait-for-service-stability: true
-      #
-      # - name: Deploy frontend to S3
-      #   run: |
-      #     # Build frontend
-      #     cd TestAiApp
-      #     npm ci
-      #     npm run build
-      #
-      #     # Deploy to S3
-      #     aws s3 sync dist/ s3://bankapp-dev-frontend --delete
-      #
-      #     # Invalidate CloudFront cache (if CloudFront is used)
-      #     # aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} --paths "/*"
+
+      - name: Setup Node.js for Frontend Build
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: TestAiApp/package-lock.json
+
+      - name: Build Frontend
+        working-directory: ./TestAiApp
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy Frontend to S3
+        working-directory: ./TestAiApp
+        run: |
+          aws s3 sync dist/ s3://bankapp-dev-frontend --delete
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E1F6IO4V0H3ONF \
+            --paths "/*"
 
       - name: Notification
         if: always()
