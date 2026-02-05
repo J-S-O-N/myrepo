@@ -56,6 +56,14 @@ function Dashboard({ userEmail, onLogout, onNavigate }) {
         <div className="header-content">
           <div className="logo-section">
             <h1 className="logo">💳 BankApp</h1>
+            <span style={{
+              fontSize: '0.7rem',
+              color: '#999',
+              marginLeft: '10px',
+              opacity: 0.6
+            }}>
+              Test App - Simulated Data
+            </span>
           </div>
           <div className="user-section">
             <span className="user-email">{userEmail}</span>

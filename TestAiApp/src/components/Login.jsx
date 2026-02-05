@@ -207,8 +207,8 @@ function Login({ onLogin }) {
               <span className="badge-text">256-bit Encryption</span>
             </div>
             <div className="badge">
-              <span className="badge-icon">🛡️</span>
-              <span className="badge-text">GDPR Compliant</span>
+              <span className="badge-icon">☁️</span>
+              <span className="badge-text">Cloud Born</span>
             </div>
             <div className="badge">
               <span className="badge-icon">✓</span>
@@ -305,6 +305,15 @@ function Login({ onLogin }) {
               <p className="demo-note">
                 <span className="note-icon">💡</span>
                 Enter any email and password (8+ characters) to get started. New users are automatically registered!
+              </p>
+              <p style={{
+                fontSize: '0.75rem',
+                color: '#999',
+                textAlign: 'center',
+                marginTop: '20px',
+                opacity: 0.7
+              }}>
+                ⚠️ This is a test application. All balances and transactions are simulated.
               </p>
             </div>
           </div>
