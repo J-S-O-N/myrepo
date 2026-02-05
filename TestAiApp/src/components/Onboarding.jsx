@@ -8,6 +8,7 @@ const Onboarding = ({ token, onComplete }) => {
   const [error, setError] = useState('');
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameHasInvalidChars, setUsernameHasInvalidChars] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -27,6 +28,19 @@ const Onboarding = ({ token, onComplete }) => {
 
   // Username availability check with debounce
   useEffect(() => {
+    // Check for invalid characters in real-time
+    if (formData.username.length > 0) {
+      const hasInvalidChars = !/^[a-zA-Z0-9_-]*$/.test(formData.username);
+      setUsernameHasInvalidChars(hasInvalidChars);
+
+      if (hasInvalidChars) {
+        setUsernameAvailable(null);
+        return;
+      }
+    } else {
+      setUsernameHasInvalidChars(false);
+    }
+
     if (formData.username.length < 3) {
       setUsernameAvailable(null);
       return;
@@ -63,6 +77,8 @@ const Onboarding = ({ token, onComplete }) => {
 
     if (!formData.username || formData.username.length < 3) {
       errors.username = 'Username must be at least 3 characters';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      errors.username = 'Username can only contain letters, numbers, underscore (_), and hyphen (-)';
     } else if (usernameAvailable === false) {
       errors.username = 'Username is already taken';
     }
@@ -287,7 +303,7 @@ const Onboarding = ({ token, onComplete }) => {
               name="username"
               value={formData.username}
               onChange={handleInputChange}
-              className={fieldErrors.username ? 'error' : usernameAvailable === true ? 'success' : ''}
+              className={fieldErrors.username || usernameHasInvalidChars ? 'error' : usernameAvailable === true ? 'success' : ''}
               placeholder="Choose a unique username"
               autoComplete="username"
             />
@@ -296,18 +312,31 @@ const Onboarding = ({ token, onComplete }) => {
                 <div className="spinner-small"></div>
               </div>
             )}
-            {!checkingUsername && usernameAvailable === true && (
+            {!checkingUsername && !usernameHasInvalidChars && usernameAvailable === true && (
               <div className="validation-indicator success">✓</div>
             )}
-            {!checkingUsername && usernameAvailable === false && (
+            {!checkingUsername && (usernameHasInvalidChars || usernameAvailable === false) && (
               <div className="validation-indicator error">✗</div>
             )}
           </div>
+          {usernameHasInvalidChars && !fieldErrors.username && (
+            <span className="error-message">
+              <span className="error-icon">⚠</span>
+              Username can only contain letters, numbers, underscore (_), and hyphen (-)
+            </span>
+          )}
           {fieldErrors.username && (
             <span className="error-message">
               <span className="error-icon">⚠</span>
               {fieldErrors.username}
             </span>
+          )}
+          {!fieldErrors.username && !usernameHasInvalidChars && (
+            <div className="field-help">
+              <span style={{ fontSize: '0.85rem', color: '#666' }}>
+                3-50 characters: letters, numbers, underscore (_), hyphen (-)
+              </span>
+            </div>
           )}
         </div>
 
