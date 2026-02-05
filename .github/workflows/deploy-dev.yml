@@ -109,6 +109,8 @@ jobs:
 
       - name: Build Frontend
         working-directory: ./TestAiApp
+        env:
+          VITE_API_URL: http://bankapp-dev-alb-553282173.us-east-1.elb.amazonaws.com
         run: |
           npm ci
           npm run build
