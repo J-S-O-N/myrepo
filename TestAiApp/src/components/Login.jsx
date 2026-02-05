@@ -173,7 +173,7 @@ function Login({ onLogin }) {
         <div className="features-section">
           <div className="brand-section">
             <div className="brand-logo">💳</div>
-            <h1 className="brand-title">BankApp</h1>
+            <h1 className="brand-title">TestBankApp</h1>
             <p className="brand-tagline">Your Financial Life, Simplified</p>
           </div>
 
@@ -300,7 +300,7 @@ function Login({ onLogin }) {
 
             <div className="login-footer">
               <div className="divider">
-                <span>New to BankApp?</span>
+                <span>New to TestBankApp?</span>
               </div>
               <p className="demo-note">
                 <span className="note-icon">💡</span>
