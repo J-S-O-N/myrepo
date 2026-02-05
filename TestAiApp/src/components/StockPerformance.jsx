@@ -8,6 +8,8 @@ function StockPerformance({ userEmail, onLogout, onNavigate }) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1D'); // 1D, 1W, 1M, 1Y
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [exchangeRateLoading, setExchangeRateLoading] = useState(true);
 
   // Fetch live JSE stock data through backend proxy
   const fetchStockData = async () => {
@@ -54,6 +56,28 @@ function StockPerformance({ userEmail, onLogout, onNavigate }) {
 
   useEffect(() => {
     fetchStockData();
+  }, []);
+
+  // Fetch USD to ZAR exchange rate
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setExchangeRateLoading(true);
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        setExchangeRate(data.rates.ZAR);
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        setExchangeRate(null);
+      } finally {
+        setExchangeRateLoading(false);
+      }
+    };
+
+    fetchExchangeRate();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchExchangeRate, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const formatPrice = (price) => {
@@ -141,6 +165,42 @@ function StockPerformance({ userEmail, onLogout, onNavigate }) {
 
         {/* Main Panel */}
         <main className="main-panel">
+          {/* Exchange Rate Widget */}
+          <div className="exchange-rate-widget" style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '20px',
+            color: 'white'
+          }}>
+            <h3 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', fontWeight: '600' }}>Exchange Rate</h3>
+            <div className="exchange-rate-display">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '1.5rem' }}>🇺🇸</span>
+                <span style={{ fontSize: '1rem', fontWeight: '500' }}>USD / ZAR</span>
+                <span style={{ fontSize: '1.5rem' }}>🇿🇦</span>
+              </div>
+              {exchangeRateLoading ? (
+                <div style={{ textAlign: 'center', padding: '10px', opacity: 0.8 }}>Loading...</div>
+              ) : exchangeRate ? (
+                <>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '8px' }}>
+                    $1.00 = R {exchangeRate.toFixed(2)}
+                  </div>
+                  <div style={{ fontSize: '0.9rem', textAlign: 'center', opacity: 0.9, marginBottom: '12px' }}>
+                    R 1.00 = ${(1 / exchangeRate).toFixed(4)}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', opacity: 0.8 }}>
+                    <span>Live Rate</span>
+                    <span>Updated every 5 min</span>
+                  </div>
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '10px', opacity: 0.8 }}>Unable to fetch rate</div>
+              )}
+            </div>
+          </div>
+
           <div className="stock-header">
             <div>
               <h1 className="page-title">JSE Stock Performance</h1>
