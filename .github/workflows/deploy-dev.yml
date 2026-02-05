@@ -109,11 +109,9 @@ jobs:
 
       - name: Build Frontend
         working-directory: ./TestAiApp
-        env:
-          VITE_API_URL: https://d7mq5w0ntx5im.cloudfront.net
         run: |
           npm ci
-          npm run build
+          npm run build:dev
 
       - name: Deploy Frontend to S3
         working-directory: ./TestAiApp

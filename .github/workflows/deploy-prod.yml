@@ -209,7 +209,7 @@ jobs:
           # Build frontend
           cd TestAiApp
           npm ci
-          npm run build
+          npm run build:prod
 
           # Deploy to S3 with cache control headers
           aws s3 sync dist/ s3://bankapp-prod-frontend \

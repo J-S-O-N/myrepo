@@ -167,7 +167,7 @@ jobs:
           # Build frontend
           cd TestAiApp
           npm ci
-          npm run build
+          npm run build:staging
 
           # Deploy to S3
           aws s3 sync dist/ s3://bankapp-staging-frontend --delete
