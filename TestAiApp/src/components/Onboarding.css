@@ -167,8 +167,8 @@
 
 /* Onboarding Body */
 .onboarding-body {
-  padding: 1.5rem 2rem;
-  max-height: 65vh;
+  padding: 1.25rem 2rem;
+  max-height: 68vh;
   overflow-y: auto;
 }
 
